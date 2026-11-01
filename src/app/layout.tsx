@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Navbar from "@/components/Layouts/Navbar";
 import { cn } from "@/lib/utils";
+import Footer from "@/components/Layouts/Footer";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -52,6 +53,7 @@ export default function RootLayout({
         <Toaster position="top-center" />
         <Navbar></Navbar>
         <div className="flex-1">{children}</div>
+        <Footer></Footer>
       </body>
     </html>
   );
