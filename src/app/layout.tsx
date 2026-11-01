@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans, JetBrains_Mono, Geist } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import Navbar from "@/components/Layouts/Navbar";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 // 1. Headings Font
 const plusJakarta = Plus_Jakarta_Sans({
@@ -41,10 +46,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans bg-[#080807] text-[#F0EFE9] antialiased min-h-screen flex flex-col selection:bg-[#E04F26] selection:text-white`}
+      className={cn("bg-[#080807]", "text-[#F0EFE9]", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col">
         <Toaster position="top-center" />
+        <Navbar></Navbar>
         <div className="flex-1">{children}</div>
       </body>
     </html>
