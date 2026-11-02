@@ -32,7 +32,6 @@ export function SignUpForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,19 +51,10 @@ export function SignUpForm({
     });
 
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
-      validation.error.issues.forEach((issue) => {
-        const path = issue.path[0];
-        if (typeof path === "string") {
-          fieldErrors[path] = issue.message;
-        }
-      });
-      setErrors(fieldErrors);
       toast.error(validation.error.issues[0]?.message || "Please fix the validation errors");
       return;
     }
 
-    setErrors({});
     setLoading(true);
 
     try {
@@ -239,12 +229,7 @@ export function SignUpForm({
                     >
                       OPERATOR / FULL NAME
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.fullName ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <User className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="name"
@@ -254,11 +239,6 @@ export function SignUpForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.fullName && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.fullName}
-                      </p>
-                    )}
                   </Field>
 
                   <Field>
@@ -268,12 +248,7 @@ export function SignUpForm({
                     >
                       PRODUCTION EMAIL
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.email ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Mail className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="email"
@@ -283,11 +258,6 @@ export function SignUpForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.email && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.email}
-                      </p>
-                    )}
                   </Field>
 
                   <Field>
@@ -302,12 +272,7 @@ export function SignUpForm({
                         OPTIONAL
                       </span>
                     </div>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.image ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Camera className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="image"
@@ -317,11 +282,6 @@ export function SignUpForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.image && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.image}
-                      </p>
-                    )}
                   </Field>
 
                   <Field>
@@ -331,12 +291,7 @@ export function SignUpForm({
                     >
                       MASTER PASSWORD
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.password ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="password"
@@ -346,11 +301,6 @@ export function SignUpForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.password && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.password}
-                      </p>
-                    )}
                   </Field>
 
                   <Button

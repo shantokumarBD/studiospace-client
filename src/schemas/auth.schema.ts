@@ -31,3 +31,4 @@ export const signUpSchema = z.object({
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
+

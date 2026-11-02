@@ -81,15 +81,7 @@ export default function AddStudioForm() {
     const validation = studioSchema.safeParse(formData);
 
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
-      validation.error.issues.forEach((issue) => {
-        const path = issue.path[0];
-        if (typeof path === "string") {
-          fieldErrors[path] = issue.message;
-        }
-      });
-      setErrors(fieldErrors);
-      toast.error("Please check the form for errors");
+      toast.error(validation.error.issues[0]?.message || "Please check the form for errors");
       return;
     }
 

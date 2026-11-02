@@ -30,7 +30,6 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,19 +42,10 @@ export function LoginForm({
     const validation = loginSchema.safeParse({ email, password });
 
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
-      validation.error.issues.forEach((issue) => {
-        const path = issue.path[0];
-        if (typeof path === "string") {
-          fieldErrors[path] = issue.message;
-        }
-      });
-      setErrors(fieldErrors);
       toast.error(validation.error.issues[0]?.message || "Invalid credentials");
       return;
     }
 
-    setErrors({});
     setLoading(true);
 
     try {
@@ -218,12 +208,7 @@ export function LoginForm({
                     >
                       PRODUCTION EMAIL
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.email ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Mail className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="email"
@@ -233,11 +218,6 @@ export function LoginForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.email && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.email}
-                      </p>
-                    )}
                   </Field>
 
                   <Field>
@@ -255,12 +235,7 @@ export function LoginForm({
                         Forgot password?
                       </Link>
                     </div>
-                    <div
-                      className={cn(
-                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
-                        errors.password ? "border-red-500" : "border-border-subtle"
-                      )}
-                    >
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="password"
@@ -270,11 +245,6 @@ export function LoginForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
-                    {errors.password && (
-                      <p className="text-[10px] text-red-500 font-mono mt-1">
-                        {errors.password}
-                      </p>
-                    )}
                   </Field>
 
                   <Button
