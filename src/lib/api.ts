@@ -33,3 +33,17 @@ export async function getAllStudios(): Promise<Studio[]> {
 }
 
 
+export async function getSingleStudio(id: string): Promise<Studio | null> {
+  try {
+    const res = await fetch(`${API_URL}/studios/${id}`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return json?.data || null;
+  } catch (error) {
+    console.error("Failed to fetch studio details:", error);
+    return null;
+  }
+}
+
+
