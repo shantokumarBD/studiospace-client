@@ -18,3 +18,18 @@ export async function getFeaturedStudios(): Promise<Studio[]> {
     return [];
   }
 }
+
+export async function getAllStudios(): Promise<Studio[]> {
+  try {
+    const res = await fetch(`${API_URL}/studios`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return json?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch studios:", error);
+    return [];
+  }
+}
+
+
