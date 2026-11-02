@@ -3,7 +3,7 @@ import FeaturedStudios from '@/components/Home/FeaturedStudios'
 import Hero from '@/components/Home/Hero'
 import React, { Suspense } from "react";
 import HowItWorks from '../components/Home/HowItWorks';
-import FAQSection from '@/components/Home/FAQSection';
+import HostGuarantee from '@/components/Home/HostGuarantee';
 
 const page = () => {
   return (
@@ -15,7 +15,7 @@ const page = () => {
           <FeaturedStudios />
         </Suspense>
         <HowItWorks></HowItWorks>
-        <FAQSection></FAQSection>
+        <HostGuarantee></HostGuarantee>
       </main>
     </div>
   )
