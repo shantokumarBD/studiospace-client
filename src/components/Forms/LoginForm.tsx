@@ -1,0 +1,272 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  Mail,
+  Lock,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { signIn } from "@/lib/auth-client";
+
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const router = useRouter();
+
+  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email || !password) {
+      toast.error("Please provide both email and password");
+      return;
+    }
+
+    const { data, error } = await signIn.email({
+      email,
+      password,
+    });
+
+    if (error) {
+      toast.error(error.message || "Invalid credentials");
+      return;
+    }
+
+    if (data) {
+      toast.success("Welcome back to StudioSpace!");
+      router.push("/");
+      router.refresh();
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    toast("Google Workspace sign-in coming soon!");
+  };
+
+  return (
+    <div
+      className={cn(
+        "w-full max-w-6xl mx-auto flex items-center justify-center",
+        className
+      )}
+      {...props}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
+        <div className="hidden lg:flex lg:col-span-5 relative rounded-3xl overflow-hidden border border-border-subtle bg-surface-1 shadow-2xl flex-col justify-between p-6 xl:p-8 self-stretch min-h-[520px] max-h-[85vh]">
+          <img
+            src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop"
+            alt="Cinema Soundstage"
+            className="absolute inset-0 w-full h-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-film-black via-film-black/75 to-film-black/40 pointer-events-none" />
+
+          <div className="relative z-10 flex items-center justify-between font-mono text-xs text-text-muted">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-orange animate-pulse" />
+              <span>STAGE//SESSION 01</span>
+            </div>
+            <span className="tracking-widest">LA · NYC · LDN</span>
+          </div>
+
+          <div className="relative z-10 flex flex-col gap-4 my-auto py-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-orange to-brand-amber p-[1.5px] flex items-center justify-center shadow-[0_0_24px_rgba(224,79,38,0.5)]">
+              <div className="w-full h-full bg-surface-1 rounded-[inherit] flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-brand-orange"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="14.31" y1="8" x2="20.05" y2="17.94" />
+                  <line x1="9.69" y1="8" x2="21.17" y2="8" />
+                  <line x1="7.38" y1="12" x2="13.12" y2="2.06" />
+                  <line x1="9.69" y1="16" x2="3.95" y2="6.06" />
+                  <line x1="14.31" y1="16" x2="2.83" y2="16" />
+                  <line x1="16.62" y1="12" x2="10.88" y2="21.94" />
+                </svg>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight leading-tight">
+                Welcome back to your <span className="text-brand-orange">soundstage</span> console.
+              </h2>
+              <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mt-2">
+                Manage upcoming production shoots, confirm hold deposits, and access studio telemetry.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-film-black/85 backdrop-blur-md border border-white/10 flex flex-col gap-2 font-mono text-[11px]">
+              <div className="flex items-center gap-2 text-text-primary">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Instant floor access & gear lockers</span>
+              </div>
+              <div className="flex items-center gap-2 text-text-primary">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Encrypted stage credentials & keys</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 pt-3 border-t border-white/10 text-xs font-mono text-text-muted">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/sign-up"
+              className="text-brand-orange font-bold hover:underline hover:text-brand-amber transition-colors"
+            >
+              Sign up →
+            </Link>
+          </div>
+        </div>
+
+        <div className="lg:col-span-7 flex flex-col justify-center max-w-lg mx-auto w-full">
+          <div className="mb-3 sm:mb-4">
+            <span className="font-mono text-[11px] font-semibold text-brand-orange uppercase tracking-wider block mb-0.5">
+              {"// OPERATOR ACCESS"}
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+              Welcome back
+            </h1>
+            <p className="text-text-secondary text-xs mt-0.5">
+              Login to your StudioSpace production workspace.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border-border-subtle font-mono text-xs font-semibold text-text-primary flex items-center justify-center gap-2.5 shadow-sm cursor-pointer h-auto"
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                fill="#EA4335"
+              />
+            </svg>
+            <span>Continue with Google Workspace</span>
+          </Button>
+
+          <FieldSeparator className="*:data-[slot=field-separator-content]:bg-film-black font-mono text-[10px] text-text-muted uppercase tracking-widest my-3">
+            OR CONTINUE WITH EMAIL
+          </FieldSeparator>
+
+          <Card className="border border-border-subtle bg-surface-1/90 shadow-2xl rounded-2xl p-4 sm:p-5">
+            <CardContent className="p-0">
+              <form onSubmit={handleEmailLogin}>
+                <FieldGroup className="flex flex-col gap-3">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="email"
+                      className="text-[10px] font-mono font-semibold text-text-secondary uppercase tracking-wider"
+                    >
+                      PRODUCTION EMAIL
+                    </FieldLabel>
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                      <Mail className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
+                      <Input
+                        id="email"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="svance@lightspeedstudios.com"
+                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
+                      />
+                    </div>
+                  </Field>
+
+                  <Field>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel
+                        htmlFor="password"
+                        className="text-[10px] font-mono font-semibold text-text-secondary uppercase tracking-wider"
+                      >
+                        MASTER PASSWORD
+                      </FieldLabel>
+                      <Link
+                        href="#"
+                        className="font-mono text-[9px] text-brand-orange hover:underline hover:text-brand-amber transition-colors"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                      <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        placeholder="••••••••••••••"
+                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
+                      />
+                    </div>
+                  </Field>
+
+                  <Button
+                    type="submit"
+                    className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 h-auto border-0"
+                  >
+                    <span>Login to Workspace</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Button>
+
+                  <FieldDescription className="text-center font-mono text-[11px] text-text-muted pt-1.5 border-t border-border-subtle">
+                    Don&apos;t have an account?{" "}
+                    <Link
+                      href="/sign-up"
+                      className="text-brand-orange font-bold hover:underline hover:text-brand-amber transition-colors"
+                    >
+                      Sign Up
+                    </Link>
+                  </FieldDescription>
+                </FieldGroup>
+              </form>
+            </CardContent>
+          </Card>
+
+          <div className="mt-3 flex items-center justify-center gap-1.5 font-mono text-[10px] text-text-muted text-center">
+            <Lock className="w-3 h-3 text-emerald-400" />
+            <span>
+              Secured by BetterAuth Engine · 256-bit AES End-to-End Vault
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

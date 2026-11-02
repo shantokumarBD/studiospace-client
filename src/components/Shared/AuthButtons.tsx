@@ -16,7 +16,7 @@ export default function AuthButtons() {
 
 
       <Link
-        href="/login"
+        href="/log-in"
         className="hidden md:flex px-4 py-2 text-sm font-semibold rounded-xl text-text-primary border border-border-subtle hover:bg-surface-2 transition-colors"
       >
         Log In
@@ -24,7 +24,7 @@ export default function AuthButtons() {
 
 
       <Link
-        href="/register"
+        href="/sign-up"
         className="hidden md:flex px-5 py-2 text-sm font-bold rounded-xl text-white bg-gradient-to-r from-brand-orange to-brand-amber brand-glow hover:opacity-95 transition-all"
       >
         Register

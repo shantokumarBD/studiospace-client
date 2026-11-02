@@ -44,7 +44,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("bg-[#080807]", "text-[#F0EFE9]", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
+      className={cn("dark", "bg-[#080807]", "text-[#F0EFE9]", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Toaster position="top-center" />
