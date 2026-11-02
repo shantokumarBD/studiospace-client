@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -18,15 +19,19 @@ import {
   Lock,
   ArrowRight,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { signIn } from "@/lib/auth-client";
+import { loginSchema } from "@/schemas/auth.schema";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,25 +40,42 @@ export function LoginForm({
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if (!email || !password) {
-      toast.error("Please provide both email and password");
+    const validation = loginSchema.safeParse({ email, password });
+
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.issues.forEach((issue) => {
+        const path = issue.path[0];
+        if (typeof path === "string") {
+          fieldErrors[path] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast.error(validation.error.issues[0]?.message || "Invalid credentials");
       return;
     }
 
-    const { data, error } = await signIn.email({
-      email,
-      password,
-    });
+    setErrors({});
+    setLoading(true);
 
-    if (error) {
-      toast.error(error.message || "Invalid credentials");
-      return;
-    }
+    try {
+      const { data, error } = await signIn.email({
+        email: validation.data.email,
+        password: validation.data.password,
+      });
 
-    if (data) {
-      toast.success("Welcome back to StudioSpace!");
-      router.push("/");
-      router.refresh();
+      if (error) {
+        toast.error(error.message || "Invalid credentials");
+        return;
+      }
+
+      if (data) {
+        toast.success("Welcome back to StudioSpace!");
+        router.push("/");
+        router.refresh();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,17 +218,26 @@ export function LoginForm({
                     >
                       PRODUCTION EMAIL
                     </FieldLabel>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.email ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <Mail className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="email"
                         type="email"
                         name="email"
-                        required
                         placeholder="svance@lightspeedstudios.com"
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </Field>
 
                   <Field>
@@ -224,25 +255,44 @@ export function LoginForm({
                         Forgot password?
                       </Link>
                     </div>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.password ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="password"
                         name="password"
                         type="password"
-                        required
                         placeholder="••••••••••••••"
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.password && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.password}
+                      </p>
+                    )}
                   </Field>
 
                   <Button
                     type="submit"
-                    className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 h-auto border-0"
+                    disabled={loading}
+                    className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 h-auto border-0 disabled:opacity-50"
                   >
-                    <span>Login to Workspace</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Authenticating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Login to Workspace</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
                   </Button>
 
                   <FieldDescription className="text-center font-mono text-[11px] text-text-muted pt-1.5 border-t border-border-subtle">

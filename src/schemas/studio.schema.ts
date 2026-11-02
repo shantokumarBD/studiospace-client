@@ -35,4 +35,7 @@ export const studioSchema = z.object({
     .min(10, "Overview must be at least 10 characters"),
 });
 
+
+
 export type StudioFormValues = z.infer<typeof studioSchema>;
+

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -20,15 +21,19 @@ import {
   Lock,
   ArrowRight,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { signIn, signUp } from "@/lib/auth-client";
+import { signUpSchema } from "@/schemas/auth.schema";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,32 +44,49 @@ export function SignUpForm({
     const image = (formData.get("image") || formData.get("imageUrl")) as string;
     const password = formData.get("password") as string;
 
-    if (!fullName || !email || !password) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-
-    const { data, error } = await signUp.email({
-      name: fullName,
+    const validation = signUpSchema.safeParse({
+      fullName,
       email,
+      image,
       password,
-      image: image || undefined,
     });
 
-    if (error) {
-      toast.error(error.message || "Failed to create account");
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.issues.forEach((issue) => {
+        const path = issue.path[0];
+        if (typeof path === "string") {
+          fieldErrors[path] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast.error(validation.error.issues[0]?.message || "Please fix the validation errors");
       return;
     }
 
-    if (data) {
-      toast.success("Account created successfully!");
-      router.push("/log-in");
-      router.refresh();
+    setErrors({});
+    setLoading(true);
+
+    try {
+      const { data, error } = await signUp.email({
+        name: validation.data.fullName,
+        email: validation.data.email,
+        password: validation.data.password,
+        image: validation.data.image || undefined,
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to create account");
+        return;
+      }
+
+      if (data) {
+        toast.success("Account created successfully!");
+        router.push("/log-in");
+        router.refresh();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,17 +239,26 @@ export function SignUpForm({
                     >
                       OPERATOR / FULL NAME
                     </FieldLabel>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.fullName ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <User className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="name"
                         name="fullName"
                         type="text"
-                        required
                         placeholder="Sundance Vance"
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.fullName && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.fullName}
+                      </p>
+                    )}
                   </Field>
 
                   <Field>
@@ -237,17 +268,26 @@ export function SignUpForm({
                     >
                       PRODUCTION EMAIL
                     </FieldLabel>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.email ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <Mail className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="email"
                         type="email"
                         name="email"
-                        required
                         placeholder="svance@lightspeedstudios.com"
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </Field>
 
                   <Field>
@@ -262,7 +302,12 @@ export function SignUpForm({
                         OPTIONAL
                       </span>
                     </div>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.image ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <Camera className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="image"
@@ -272,6 +317,11 @@ export function SignUpForm({
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.image && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.image}
+                      </p>
+                    )}
                   </Field>
 
                   <Field>
@@ -281,25 +331,44 @@ export function SignUpForm({
                     >
                       MASTER PASSWORD
                     </FieldLabel>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
+                    <div
+                      className={cn(
+                        "flex items-center bg-surface-2 border rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors",
+                        errors.password ? "border-red-500" : "border-border-subtle"
+                      )}
+                    >
                       <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
                       <Input
                         id="password"
                         name="password"
                         type="password"
-                        required
                         placeholder="••••••••••••••"
                         className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
                       />
                     </div>
+                    {errors.password && (
+                      <p className="text-[10px] text-red-500 font-mono mt-1">
+                        {errors.password}
+                      </p>
+                    )}
                   </Field>
 
                   <Button
                     type="submit"
-                    className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 h-auto border-0"
+                    disabled={loading}
+                    className="w-full mt-1 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 h-auto border-0 disabled:opacity-50"
                   >
-                    <span>Create Account</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Creating Account...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Create Account</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
                   </Button>
 
                   <FieldDescription className="text-center text-[11px] text-text-muted">
