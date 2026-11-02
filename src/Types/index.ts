@@ -33,3 +33,13 @@ export interface StudioFilterProps {
   onFilterChange: (name: keyof FilterState, value: string) => void;
   onReset: () => void;
 }
+
+
+export interface AuthButtonsProps {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } | null;
+  onSignOut?: () => void;
+}

@@ -2,18 +2,31 @@
 
 import Link from "next/link";
 import { Moon } from "lucide-react";
+import { useSession, signOut } from "@/lib/auth-client";
+import { UserDropdown } from "@/components/Shared/UserDropdown";
 
 export default function AuthButtons() {
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
+  // console.log(user );
+  
+
+  if (isPending) {
+    return <div className="w-8 h-8 rounded-full bg-surface-2 animate-pulse" />;
+  }
+
+  if (user) {
+    return <UserDropdown user={user} onSignOut={() => signOut()} />;
+  }
+
   return (
     <div className="hidden sm:flex items-center gap-3">
-
       <button
         aria-label="Toggle Theme"
-        className="w-10 h-10 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
+        className="w-10 h-10 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
       >
         <Moon className="w-4 h-4" />
       </button>
-
 
       <Link
         href="/log-in"
@@ -21,7 +34,6 @@ export default function AuthButtons() {
       >
         Log In
       </Link>
-
 
       <Link
         href="/sign-up"

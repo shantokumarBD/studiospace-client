@@ -22,7 +22,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { signUp } from "@/lib/auth-client";
+import { signIn, signUp } from "@/lib/auth-client";
 
 export function SignUpForm({
   className,
@@ -69,8 +69,13 @@ export function SignUpForm({
   };
 
   const handleGoogleSignUp = async () => {
-    toast("Google Workspace sign-in coming soon!");
+    const data = await signIn.social({
+      provider: "google"
+    })
   };
+
+
+
 
   return (
     <div

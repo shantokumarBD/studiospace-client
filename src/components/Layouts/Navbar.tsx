@@ -10,7 +10,11 @@ export default function Navbar() {
       <div className="h-20 max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between">
         <Logo />
 
-        <Suspense fallback={<div className="hidden lg:flex items-center gap-6 xl:gap-8 h-6 w-72" />}>
+        <Suspense
+          fallback={
+            <div className="hidden lg:flex items-center gap-6 xl:gap-8 h-6 w-72" />
+          }
+        >
           <NavLinks />
         </Suspense>
 

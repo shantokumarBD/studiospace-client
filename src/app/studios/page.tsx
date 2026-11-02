@@ -1,9 +1,11 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { getAllStudios } from "@/lib/api";
 import StudiosExplorer from "@/components/Studios/StudiosExplorer";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
 async function StudiosData() {
+  await connection();
   const studios = await getAllStudios();
   return <StudiosExplorer initialStudios={studios} />;
 }

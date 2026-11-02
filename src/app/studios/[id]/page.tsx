@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { getSingleStudio } from "@/lib/api";
 import StudioDetailsView from "@/components/Studios/StudioDetailsView";
 import ModernLoader from "@/components/Shared/ModernLoader";
@@ -10,6 +11,7 @@ interface PageProps {
 }
 
 async function StudioContent({ params }: PageProps) {
+  await connection();
   const { id } = await params;
   const studio = await getSingleStudio(id);
 

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, Star, MapPin } from "lucide-react";
 import { getFeaturedStudios } from "@/lib/api";
+import { connection } from "next/server";
 
 export default async function FeaturedStudios() {
+  await connection();
   const studios = await getFeaturedStudios();
 
   return (
