@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Clapperboard,
-  Sparkles,
   MapPin,
   DollarSign,
   Users,
@@ -184,10 +183,6 @@ export default function AddStudioForm() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border-subtle pb-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-mono uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Host Production Console</span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
             List a Creative Studio
           </h1>
