@@ -1,20 +1,26 @@
 import { Suspense } from "react";
 import { getAllStudios } from "@/lib/api";
 import StudiosExplorer from "@/components/Studios/StudiosExplorer";
+import ModernLoader from "@/components/Shared/ModernLoader";
 
-export default async function StudiosPage() {
+async function StudiosData() {
   const studios = await getAllStudios();
+  return <StudiosExplorer initialStudios={studios} />;
+}
 
+export default function StudiosPage() {
   return (
     <main className="min-h-screen bg-film-black">
       <Suspense
         fallback={
-          <div className="py-24 text-center text-text-muted font-mono text-sm">
-            Loading Calibrated Studios...
-          </div>
+          <ModernLoader
+            size="lg"
+            text="Calibrating Studio Catalog..."
+            subtext="SYNCING REALTIME AVAILABILITY & RATES"
+          />
         }
       >
-        <StudiosExplorer initialStudios={studios} />
+        <StudiosData />
       </Suspense>
     </main>
   );

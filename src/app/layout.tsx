@@ -6,24 +6,20 @@ import Navbar from "@/components/Layouts/Navbar";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Layouts/Footer";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-
-// 1. Headings Font
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
   weight: ["500", "600", "700", "800"],
 });
 
-// 2. Body Font
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["400", "500", "700"],
 });
 
-// 3. Monospace / Price Font
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
@@ -47,13 +43,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn("bg-[#080807]", "text-[#F0EFE9]", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Toaster position="top-center" />
-        <Navbar></Navbar>
+        <Navbar />
         <div className="flex-1">{children}</div>
-        <Footer></Footer>
+        <Footer />
       </body>
     </html>
   );

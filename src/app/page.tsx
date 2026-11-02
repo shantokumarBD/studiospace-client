@@ -1,24 +1,31 @@
-import CategorySection from '@/components/Home/CategorySection'
-import FeaturedStudios from '@/components/Home/FeaturedStudios'
-import Hero from '@/components/Home/Hero'
+import CategorySection from "@/components/Home/CategorySection";
+import FeaturedStudios from "@/components/Home/FeaturedStudios";
+import Hero from "@/components/Home/Hero";
 import React, { Suspense } from "react";
-import HowItWorks from '../components/Home/HowItWorks';
-import HostGuarantee from '@/components/Home/HostGuarantee';
+import HowItWorks from "@/components/Home/HowItWorks";
+import HostGuarantee from "@/components/Home/HostGuarantee";
+import ModernLoader from "@/components/Shared/ModernLoader";
 
-const page = () => {
+export default function HomePage() {
   return (
     <div>
       <main>
-        <Hero></Hero>
-        <CategorySection></CategorySection>
-        <Suspense fallback={<div className="text-center py-20 font-mono text-text-muted">Loading studios...</div>}>
+        <Hero />
+        <CategorySection />
+        <Suspense
+          fallback={
+            <ModernLoader
+              size="lg"
+              text="Loading Featured Studios..."
+              subtext="TOP RATED PRODUCTION STAGES"
+            />
+          }
+        >
           <FeaturedStudios />
         </Suspense>
-        <HowItWorks></HowItWorks>
-        <HostGuarantee></HostGuarantee>
+        <HowItWorks />
+        <HostGuarantee />
       </main>
     </div>
-  )
+  );
 }
-
-export default page
