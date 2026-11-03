@@ -408,11 +408,11 @@ export default function MyBookingsClient({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-border-subtle">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-text-primary text-xs font-mono font-semibold transition-colors flex items-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-3 text-text-primary text-xs font-mono font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 <span>Print Receipt</span>
@@ -420,7 +420,7 @@ export default function MyBookingsClient({
               <button
                 type="button"
                 onClick={() => setSelectedReceipt(null)}
-                className="px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white text-xs font-mono font-semibold transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white text-xs font-mono font-semibold transition-colors cursor-pointer text-center"
               >
                 Close
               </button>
@@ -458,12 +458,12 @@ export default function MyBookingsClient({
               . The record will remain in your booking history.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 disabled={isCancelling}
                 onClick={() => setCancellingBooking(null)}
-                className="px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer text-center"
               >
                 Keep Reservation
               </button>
@@ -471,7 +471,7 @@ export default function MyBookingsClient({
                 type="button"
                 disabled={isCancelling}
                 onClick={handleConfirmCancel}
-                className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {isCancelling ? (
                   <>

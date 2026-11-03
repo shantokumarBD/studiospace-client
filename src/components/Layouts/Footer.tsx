@@ -36,7 +36,7 @@ export default function Footer() {
       {/* Top Gradient Accent Line */}
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand-orange to-transparent" />
 
-      <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-16">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 py-12 sm:py-16">
         
         {/* Top Bar: Logo + Live Platform Status */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-12 border-b border-border-subtle gap-4">
@@ -104,7 +104,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Copyright & Rebranded Social Links */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted text-center sm:text-left">
           <p>© 2026 StudioSpace. All rights reserved. Film and audio facility telemetry platform.</p>
           
           <div className="flex items-center gap-3">

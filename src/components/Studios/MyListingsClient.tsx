@@ -272,7 +272,7 @@ export default function MyListingsClient({
                     <MapPin className="w-3.5 h-3.5 text-brand-orange shrink-0" />
                     <span className="truncate">{studio.location}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-xs font-mono text-text-muted mt-1">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-text-muted mt-1">
                     <span className="text-brand-orange font-bold text-sm">
                       ${studio.hourlyRate}/hr
                     </span>
@@ -348,12 +348,12 @@ export default function MyListingsClient({
               deleted.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setDeletingStudio(null)}
-                className="px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -361,7 +361,7 @@ export default function MyListingsClient({
                 type="button"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {isDeleting ? (
                   <>

@@ -217,7 +217,7 @@ export default function StudioForm({
         />
       </div>
 
-      <div className="sm:col-span-2 pt-2 flex items-center justify-end gap-3">
+      <div className="sm:col-span-2 pt-2 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
         {onCancel && (
           <Button
             type="button"

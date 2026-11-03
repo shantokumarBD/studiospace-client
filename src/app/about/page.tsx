@@ -68,16 +68,16 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-20 sm:mb-28">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-16 sm:mb-28">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="p-6 rounded-3xl bg-surface-1 border border-border-subtle text-center hover:border-brand-orange/30 transition-all shadow-sm"
+              className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-surface-1 border border-border-subtle text-center hover:border-brand-orange/30 transition-all shadow-sm"
             >
-              <p className="font-mono text-3xl sm:text-4xl font-extrabold text-brand-orange">
+              <p className="font-mono text-2xl sm:text-4xl font-extrabold text-brand-orange">
                 {stat.value}
               </p>
-              <p className="mt-2 text-xs font-mono text-text-secondary uppercase tracking-wider">
+              <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-mono text-text-secondary uppercase tracking-wider">
                 {stat.label}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function AboutPage() {
               className="w-full h-full object-cover filter brightness-95"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-film-black/80 via-transparent to-film-black/20" />
-            <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-film-black/80 backdrop-blur-md border border-white/10 font-mono text-xs flex items-center justify-between">
+            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-film-black/85 backdrop-blur-md border border-white/10 font-mono text-[11px] sm:text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
               <span className="text-text-primary font-bold">Horizon Stage 4 Cinema Volume</span>
               <span className="text-brand-orange font-semibold">Sound-Certified</span>
             </div>

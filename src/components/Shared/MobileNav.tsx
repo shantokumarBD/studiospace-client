@@ -54,6 +54,7 @@ export default function MobileNav() {
         >
           <div>
             <SheetHeader className="text-left pb-4 border-b border-border-subtle">
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <div onClick={() => setOpen(false)}>
                 <Logo size="sm" />
               </div>

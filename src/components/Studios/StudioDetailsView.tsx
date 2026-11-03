@@ -529,7 +529,7 @@ export default function StudioDetailsView({
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-film-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-lg rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-8 shadow-2xl flex flex-col gap-6">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl bg-surface-1 border border-border-subtle p-5 sm:p-8 shadow-2xl flex flex-col gap-5 sm:gap-6">
 
             <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
               <div>

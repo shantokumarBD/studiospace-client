@@ -37,7 +37,7 @@ export default function StudioCard({ studio, isSaved, onToggleWishlist }: Studio
 
           <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-film-black/85 backdrop-blur-md border border-white/10">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-mono text-[10px] sm:text-[11px] font-semibold text-emerald-400">
+            <span className="font-mono text-[10px] sm:text-[11px] font-semibold text-emerald-400 truncate max-w-[125px] sm:max-w-none">
               {studio.badge || studio.availability || "Instant Book"}
             </span>
           </div>
