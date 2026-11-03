@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getSingleStudio, getMyWishlist } from "@/lib/api";
+import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import StudioDetailsView from "@/components/Studios/StudioDetailsView";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
@@ -26,10 +27,14 @@ async function StudioContent({ params }: PageProps) {
     headers: await headers(),
   });
 
-  const [studio, wishlist] = await Promise.all([
-    getSingleStudio(id),
-    session?.user?.email ? getMyWishlist(session.user.email) : Promise.resolve([]),
-  ]);
+  let userWishlist: any[] = [];
+  if (session?.user?.email) {
+    const token = await getAuthTokenServer();
+    userWishlist = await getMyWishlist(session.user.email, token);
+  }
+
+  const studio = await getSingleStudio(id);
+  const wishlist = userWishlist;
 
   if (!studio) {
     return (

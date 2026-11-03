@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getAllStudios, getMyWishlist } from "@/lib/api";
+import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import StudiosExplorer from "@/components/Studios/StudiosExplorer";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
@@ -16,9 +17,11 @@ async function StudiosData() {
   });
 
   const studios = await getAllStudios();
-  const wishlist = session?.user?.email
-    ? await getMyWishlist(session.user.email)
-    : [];
+  let wishlist: any[] = [];
+  if (session?.user?.email) {
+    const token = await getAuthTokenServer();
+    wishlist = await getMyWishlist(session.user.email, token);
+  }
 
   const initialWishlistIds = wishlist.map((item) => item.studioId);
 

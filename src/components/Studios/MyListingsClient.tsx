@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Plus,
@@ -22,6 +22,7 @@ import { Studio } from "@/Types";
 import { deleteStudio, updateStudio } from "@/lib/api";
 import { studioSchema } from "@/schemas/studio.schema";
 import StudioForm from "@/components/Forms/StudioForm";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 
 interface MyListingsClientProps {
   user: {
@@ -36,6 +37,10 @@ export default function MyListingsClient({
   initialStudios,
 }: MyListingsClientProps) {
   const [studios, setStudios] = useState<Studio[]>(initialStudios);
+
+  useEffect(() => {
+    setStudios(initialStudios);
+  }, [initialStudios]);
   const [deletingStudio, setDeletingStudio] = useState<Studio | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingStudio, setEditingStudio] = useState<Studio | null>(null);
@@ -70,7 +75,8 @@ export default function MyListingsClient({
 
     setIsDeleting(true);
     try {
-      const result = await deleteStudio(deletingStudio._id);
+      const token = await GetTokenFormClient();
+      const result = await deleteStudio(deletingStudio._id, token);
       if (result.success) {
         setStudios((prev) => prev.filter((s) => s._id !== deletingStudio._id));
         toast.success("Studio deleted successfully");
@@ -108,8 +114,8 @@ export default function MyListingsClient({
           .map((f) => f.trim())
           .filter(Boolean),
       };
-
-      const result = await updateStudio(editingStudio._id, payload);
+      const token = await GetTokenFormClient();
+      const result = await updateStudio(editingStudio._id, payload,token);
       if (result.success) {
         setStudios((prev) =>
           prev.map((s) =>

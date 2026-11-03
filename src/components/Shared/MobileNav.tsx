@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import { navItems } from "./NavLinks";
 import {
@@ -17,8 +17,29 @@ import { useSession } from "@/lib/auth-client";
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
+
+  const handleMobileNavClick = (href: string) => {
+    setOpen(false);
+    if (href.includes("#how-it-works")) {
+      if (pathname === "/") {
+        const el = document.getElementById("how-it-works");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", "/#how-it-works");
+        }
+      } else {
+        router.push("/#how-it-works");
+      }
+    } else if (href === "/") {
+      if (pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.history.pushState(null, "", "/");
+      }
+    }
+  };
 
   return (
     <div className="lg:hidden">
@@ -38,20 +59,24 @@ export default function MobileNav() {
             </SheetHeader>
 
             <div className="flex flex-col gap-1.5 py-4">
-              {navItems.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    pathname === link.href
-                      ? "bg-surface-2 text-text-primary border-l-2 border-brand-orange"
-                      : "text-text-secondary hover:bg-surface-2 hover:text-text-primary"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navItems.map((link) => {
+                const active = pathname === link.href;
+
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => handleMobileNavClick(link.href)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-surface-2 text-text-primary border-l-2 border-brand-orange"
+                        : "text-text-secondary hover:bg-surface-2 hover:text-text-primary"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 

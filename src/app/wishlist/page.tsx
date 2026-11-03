@@ -1,15 +1,18 @@
+import { Suspense } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getMyWishlist } from "@/lib/api";
+import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import WishlistClient from "@/components/Wishlist/WishlistClient";
+import ModernLoader from "@/components/Shared/ModernLoader";
 
 export const metadata = {
   title: "Saved Wishlist | StudioSpace",
   description: "Your saved production stages and creative studios.",
 };
 
-export default async function WishlistPage() {
+async function WishlistContent() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -18,14 +21,23 @@ export default async function WishlistPage() {
     redirect("/log-in");
   }
 
-  const initialWishlist = await getMyWishlist(session.user.email || "");
+  const token = await getAuthTokenServer();
+  const initialWishlist = await getMyWishlist(session.user.email || "", token);
 
   return (
+    <WishlistClient
+      user={session.user}
+      initialWishlist={initialWishlist}
+    />
+  );
+}
+
+export default function WishlistPage() {
+  return (
     <main className="min-h-screen bg-film-black">
-      <WishlistClient
-        user={session.user}
-        initialWishlist={initialWishlist}
-      />
+      <Suspense fallback={<ModernLoader size="lg" text="Loading your saved wishlist..." />}>
+        <WishlistContent />
+      </Suspense>
     </main>
   );
 }

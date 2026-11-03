@@ -59,7 +59,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="relative bg-film-black py-20 lg:py-28 border-b border-border-subtle overflow-hidden">
+    <section id="how-it-works" className="scroll-mt-20 relative bg-film-black py-20 lg:py-28 border-b border-border-subtle overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(224,79,38,0.05)_0%,transparent_60%)] pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 relative z-10">
