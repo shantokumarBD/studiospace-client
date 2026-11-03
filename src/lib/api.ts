@@ -52,3 +52,35 @@ export async function createStudio(studioData: Partial<Studio>) {
   });
   return res.json();
 }
+
+
+export async function getMyStudios(email: string): Promise<Studio[]> {
+  try {
+    const res = await fetch(`${API_URL}/my-studios?email=${encodeURIComponent(email)}`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return json?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch my studios:", error);
+    return [];
+  }
+}
+
+export async function deleteStudio(id: string) {
+  const res = await fetch(`${API_URL}/studios/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+}
+
+export async function updateStudio(id: string, updatedData: Partial<Studio>) {
+  const res = await fetch(`${API_URL}/studios/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedData),
+  });
+  return res.json();
+}
