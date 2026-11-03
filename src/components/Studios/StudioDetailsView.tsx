@@ -26,6 +26,7 @@ import {
 import { Studio, Booking } from "@/Types";
 import { useSession } from "@/lib/auth-client";
 import { createBooking, addToWishlist, removeFromWishlist } from "@/lib/api";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 import confetti from "canvas-confetti";
 
 interface StudioDetailsViewProps {
@@ -107,6 +108,8 @@ export default function StudioDetailsView({
       return;
     }
 
+    const token = await GetTokenFormClient();
+
     if (!isSaved) {
       setIsSaved(true);
       try {
@@ -119,7 +122,7 @@ export default function StudioDetailsView({
           hourlyRate: studio.hourlyRate,
           category: studio.category,
           rating: studio.rating,
-        });
+        }, token);
         if (result.success) {
           toast.success("Added to your saved wishlist!");
         }
@@ -130,7 +133,7 @@ export default function StudioDetailsView({
     } else {
       setIsSaved(false);
       try {
-        await removeFromWishlist(studio._id);
+        await removeFromWishlist(studio._id, token);
         toast.success("Removed from wishlist");
       } catch {
         toast.error("Failed to remove from wishlist");
@@ -187,7 +190,8 @@ export default function StudioDetailsView({
         status: "Pending Host Approval",
       };
 
-      const result = await createBooking(payload);
+      const token = await GetTokenFormClient();
+      const result = await createBooking(payload, token);
       if (result.success) {
         setBookingSuccess(true);
         fireCelebration();

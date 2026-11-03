@@ -15,6 +15,7 @@ import {
 import toast from "react-hot-toast";
 import { WishlistItem } from "@/Types";
 import { removeFromWishlist, getMyWishlist } from "@/lib/api";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 
 interface WishlistClientProps {
   user: {
@@ -36,7 +37,8 @@ export default function WishlistClient({
     if (!user?.email) return;
     setIsSyncing(true);
     try {
-      const items = await getMyWishlist(user.email);
+      const token = await GetTokenFormClient();
+      const items = await getMyWishlist(user.email, token);
       setWishlist(items);
       toast.success("Wishlist synchronized");
     } catch {
@@ -49,7 +51,8 @@ export default function WishlistClient({
   const handleRemove = async (id: string, title: string) => {
     setRemovingId(id);
     try {
-      const result = await removeFromWishlist(id);
+      const token = await GetTokenFormClient();
+      const result = await removeFromWishlist(id, token);
       if (result.success) {
         setWishlist((prev) => prev.filter((item) => item._id !== id && item.studioId !== id));
         toast.success(`"${title}" removed from wishlist`);

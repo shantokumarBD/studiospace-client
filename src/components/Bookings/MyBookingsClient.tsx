@@ -21,6 +21,7 @@ import {
 import toast from "react-hot-toast";
 import { Booking } from "@/Types";
 import { cancelBooking } from "@/lib/api";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 
 interface MyBookingsClientProps {
   user: {
@@ -69,7 +70,8 @@ export default function MyBookingsClient({
 
     setIsCancelling(true);
     try {
-      const result = await cancelBooking(cancellingBooking._id);
+      const token = await GetTokenFormClient();
+      const result = await cancelBooking(cancellingBooking._id, token);
       if (result.success) {
         setBookings((prev) =>
           prev.map((b) =>

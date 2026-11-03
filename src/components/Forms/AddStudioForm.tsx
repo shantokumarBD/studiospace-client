@@ -8,6 +8,7 @@ import { studioSchema } from "@/schemas/studio.schema";
 import { createStudio } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import StudioForm from "@/components/Forms/StudioForm";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 
 export default function AddStudioForm() {
   const router = useRouter();
@@ -44,12 +45,12 @@ export default function AddStudioForm() {
         ownerName: session.user.name || "Studio Host",
         ownerEmail: session.user.email || "",
       };
-
-      const result = await createStudio(payload);
+      const token = await GetTokenFormClient();
+      const result = await createStudio(payload, token);
       if (result.success) {
         toast.success("Studio published successfully!");
         form.reset();
-        router.push("/studios");
+        router.push("/my-listings");
         router.refresh();
       } else {
         toast.error(result.message || "Failed to publish studio");

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { Studio, FilterState } from "@/Types";
 import { useSession } from "@/lib/auth-client";
 import { addToWishlist, removeFromWishlist } from "@/lib/api";
+import { GetTokenFormClient } from "@/lib/gettokenformClient";
 import StudioCard from "./StudioCard";
 import StudioFilter from "./StudioFilter";
 import Pagination from "@/components/Shared/Pagination";
@@ -52,6 +53,8 @@ export default function StudiosExplorer({
     const studio = initialStudios.find((s) => s._id === id);
     if (!studio) return;
 
+    const token = await GetTokenFormClient();
+
     if (!isSaved) {
       setWishlist((prev) => [...prev, id]);
       try {
@@ -64,7 +67,7 @@ export default function StudiosExplorer({
           hourlyRate: studio.hourlyRate,
           category: studio.category,
           rating: studio.rating,
-        });
+        }, token);
         if (result.success) {
           toast.success("Studio added to your wishlist!");
         } else {
@@ -78,7 +81,7 @@ export default function StudiosExplorer({
     } else {
       setWishlist((prev) => prev.filter((item) => item !== id));
       try {
-        const result = await removeFromWishlist(id);
+        const result = await removeFromWishlist(id, token);
         if (result.success) {
           toast.success("Studio removed from wishlist");
         } else {
