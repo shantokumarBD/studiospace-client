@@ -1,4 +1,4 @@
-import { Studio, Booking } from "@/Types";
+import { Studio, Booking, WishlistItem } from "@/Types";
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -99,7 +99,7 @@ export async function createBooking(bookingData: Partial<Booking>) {
 export async function getMyBookings(email: string): Promise<Booking[]> {
   try {
     const res = await fetch(
-      `${API_URL}/my-bookings?email=${email}`,
+      `${API_URL}/my-bookings?email=${encodeURIComponent(email)}`,
       {
         cache: "no-store",
       }
@@ -114,6 +114,40 @@ export async function getMyBookings(email: string): Promise<Booking[]> {
 
 export async function cancelBooking(id: string) {
   const res = await fetch(`${API_URL}/my-bookings/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+}
+
+export async function addToWishlist(item: Partial<WishlistItem>) {
+  const res = await fetch(`${API_URL}/wishlist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
+  return res.json();
+}
+
+export async function getMyWishlist(email: string): Promise<WishlistItem[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/wishlist?email=${encodeURIComponent(email)}`,
+      {
+        cache: "no-store",
+      }
+    );
+    const json = await res.json();
+    return json?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch wishlist:", error);
+    return [];
+  }
+}
+
+export async function removeFromWishlist(id: string) {
+  const res = await fetch(`${API_URL}/wishlist/${id}`, {
     method: "DELETE",
   });
   return res.json();

@@ -36,7 +36,27 @@ export interface Booking {
   wrapTime: string;
   totalAmount: number;
   specialNotes?: string;
-  status: "CONFIRMED" | "PENDING" | "COMPLETED" | "CANCELLED";
+  status:
+    | "CONFIRMED"
+    | "PENDING"
+    | "COMPLETED"
+    | "CANCELLED"
+    | "Pending Host Approval"
+    | "Cancelled"
+    | string;
+  createdAt?: string | Date;
+}
+
+export interface WishlistItem {
+  _id: string;
+  studioId: string;
+  userEmail: string;
+  title: string;
+  image: string;
+  location: string;
+  hourlyRate: number;
+  category: string;
+  rating: number;
   createdAt?: string | Date;
 }
 
