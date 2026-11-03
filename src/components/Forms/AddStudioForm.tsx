@@ -50,8 +50,8 @@ export default function AddStudioForm() {
       if (result.success) {
         toast.success("Studio published successfully!");
         form.reset();
-        router.push("/my-listings");
         router.refresh();
+        router.push("/my-listings");
       } else {
         toast.error(result.message || "Failed to publish studio");
       }

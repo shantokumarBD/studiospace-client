@@ -7,6 +7,9 @@ import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import MyListingsClient from "@/components/Studios/MyListingsClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "My Studio Listings | StudioSpace",
   description: "Manage your listed production spaces and stages.",
@@ -26,6 +29,7 @@ async function MyListingsContent() {
 
   return (
     <MyListingsClient
+      key={initialStudios.map((s) => s._id).join("-") || "empty"}
       user={session.user}
       initialStudios={initialStudios}
     />

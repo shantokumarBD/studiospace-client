@@ -202,6 +202,7 @@ export default function StudioDetailsView({
       const token = await GetTokenFormClient();
       const result = await createBooking(payload, token);
       if (result.success) {
+        router.refresh();
         setBookingSuccess(true);
         fireCelebration();
       } else {
@@ -547,6 +548,7 @@ export default function StudioDetailsView({
                   setIsModalOpen(false);
                   if (bookingSuccess) {
                     setBookingSuccess(false);
+                    router.refresh();
                     router.push("/my-bookings");
                   }
                 }}
@@ -620,6 +622,7 @@ export default function StudioDetailsView({
                     onClick={() => {
                       setIsModalOpen(false);
                       setBookingSuccess(false);
+                      router.refresh();
                       router.push("/my-bookings");
                     }}
                     className="w-full sm:w-1/2 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.4)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2"

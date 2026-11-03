@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Trash2,
@@ -36,11 +37,15 @@ export default function MyListingsClient({
   user,
   initialStudios,
 }: MyListingsClientProps) {
+  const router = useRouter();
   const [studios, setStudios] = useState<Studio[]>(initialStudios);
+  const [prevInitialStudios, setPrevInitialStudios] = useState(initialStudios);
 
-  useEffect(() => {
+  if (prevInitialStudios !== initialStudios) {
+    setPrevInitialStudios(initialStudios);
     setStudios(initialStudios);
-  }, [initialStudios]);
+  }
+
   const [deletingStudio, setDeletingStudio] = useState<Studio | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingStudio, setEditingStudio] = useState<Studio | null>(null);
@@ -81,6 +86,7 @@ export default function MyListingsClient({
         setStudios((prev) => prev.filter((s) => s._id !== deletingStudio._id));
         toast.success("Studio deleted successfully");
         setDeletingStudio(null);
+        router.refresh();
       } else {
         toast.error(result.message || "Failed to delete studio");
       }
@@ -124,6 +130,7 @@ export default function MyListingsClient({
         );
         toast.success("Studio listing updated successfully");
         setEditingStudio(null);
+        router.refresh();
       } else {
         toast.error(result.message || "Failed to update studio");
       }

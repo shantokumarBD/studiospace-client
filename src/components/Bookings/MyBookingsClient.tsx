@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { Booking } from "@/Types";
 import { cancelBooking } from "@/lib/api";
 import { GetTokenFormClient } from "@/lib/gettokenformClient";
+import { useRouter } from "next/navigation";
 
 interface MyBookingsClientProps {
   user: {
@@ -35,7 +36,15 @@ export default function MyBookingsClient({
   user,
   initialBookings,
 }: MyBookingsClientProps) {
+  const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [prevInitialBookings, setPrevInitialBookings] = useState(initialBookings);
+
+  if (prevInitialBookings !== initialBookings) {
+    setPrevInitialBookings(initialBookings);
+    setBookings(initialBookings);
+  }
+
   const [cancellingBooking, setCancellingBooking] = useState<Booking | null>(
     null
   );
@@ -82,6 +91,7 @@ export default function MyBookingsClient({
         );
         toast.success("Reservation marked as Cancelled");
         setCancellingBooking(null);
+        router.refresh();
       } else {
         toast.error(result.message || "Failed to cancel reservation");
       }

@@ -47,8 +47,8 @@ export default function EditStudioClient({ studio }: EditStudioClientProps) {
       const result = await updateStudio(studio._id, payload, token);
       if (result.success) {
         toast.success("Studio listing updated successfully!");
-        router.push("/my-listings");
         router.refresh();
+        router.push("/my-listings");
       } else {
         toast.error(result.message || "Failed to update studio");
       }

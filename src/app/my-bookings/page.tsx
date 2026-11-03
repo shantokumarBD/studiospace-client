@@ -7,6 +7,9 @@ import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import MyBookingsClient from "@/components/Bookings/MyBookingsClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "My Stage Bookings | StudioSpace",
   description: "Track and manage your scheduled film and photo shoot reservations.",
@@ -26,6 +29,7 @@ async function MyBookingsContent() {
 
   return (
     <MyBookingsClient
+      key={initialBookings.map((b) => b._id + (b.status || "")).join("-") || "empty"}
       user={session.user}
       initialBookings={initialBookings}
     />
