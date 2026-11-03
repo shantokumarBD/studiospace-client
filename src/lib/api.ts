@@ -1,4 +1,4 @@
-import { Studio } from "@/Types";
+import { Studio, Booking } from "@/Types";
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -81,6 +81,40 @@ export async function updateStudio(id: string, updatedData: Partial<Studio>) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(updatedData),
+  });
+  return res.json();
+}
+
+export async function createBooking(bookingData: Partial<Booking>) {
+  const res = await fetch(`${API_URL}/bookings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bookingData),
+  });
+  return res.json();
+}
+
+export async function getMyBookings(email: string): Promise<Booking[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/my-bookings?email=${email}`,
+      {
+        cache: "no-store",
+      }
+    );
+    const json = await res.json();
+    return json?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch my bookings:", error);
+    return [];
+  }
+}
+
+export async function cancelBooking(id: string) {
+  const res = await fetch(`${API_URL}/my-bookings/${id}`, {
+    method: "DELETE",
   });
   return res.json();
 }

@@ -130,67 +130,39 @@ export default function MyListingsClient({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border-subtle pb-6">
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-6">
         <div>
-          <span className="font-mono text-xs text-brand-orange uppercase tracking-wider block mb-1">
-            // PRODUCTION COMMAND & STAGE OPERATIONS •
-          </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
-            Studio Operations Console
+            My Studio Listings
           </h1>
-          <div className="flex items-center gap-2 mt-1 text-xs text-text-secondary">
-            <span className="font-semibold text-text-primary">
-              {user.name || "Stage Host"}
-            </span>
-            <span>•</span>
-            <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              VERIFIED HOST // STAGE OPERATOR
-            </span>
-          </div>
+          <p className="text-xs sm:text-sm text-text-secondary mt-1">
+            Manage your listed production spaces, update rates, or remove stages.
+          </p>
         </div>
 
         <Link
           href="/add-studio"
-          className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/20 cursor-pointer self-start md:self-auto"
+          className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/20 cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>+ Add New Studio</span>
         </Link>
       </div>
 
-      <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-1">
-        <div className="px-4 py-2 rounded-xl bg-surface-2 border border-brand-orange/40 text-brand-orange font-mono text-xs font-semibold flex items-center gap-2 shrink-0">
-          <Clapperboard className="w-3.5 h-3.5" />
-          <span>My Studio Listings</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-brand-orange/20 text-brand-orange text-[10px] font-bold">
-            {studios.length}
-          </span>
-        </div>
-
-        <Link
-          href="/my-bookings"
-          className="px-4 py-2 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border-subtle text-text-secondary hover:text-text-primary font-mono text-xs font-semibold flex items-center gap-2 transition-colors shrink-0"
-        >
-          <CalendarCheck2 className="w-3.5 h-3.5 text-text-muted" />
-          <span>My Bookings</span>
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="p-4 rounded-2xl bg-surface-1 border border-border-subtle">
-          <span className="text-[10px] font-mono text-text-muted uppercase block">
+          <span className="text-xs font-mono text-text-muted uppercase block">
             Total Listings
           </span>
           <p className="text-2xl font-bold font-mono text-text-primary mt-1">
             {studios.length}{" "}
             <span className="text-xs text-text-muted font-sans font-normal">
-              Stages
+              Studios
             </span>
           </p>
         </div>
         <div className="p-4 rounded-2xl bg-surface-1 border border-border-subtle">
-          <span className="text-[10px] font-mono text-text-muted uppercase block">
+          <span className="text-xs font-mono text-text-muted uppercase block">
             Avg Hourly Rate
           </span>
           <p className="text-2xl font-bold font-mono text-brand-orange mt-1">
@@ -201,23 +173,14 @@ export default function MyListingsClient({
           </p>
         </div>
         <div className="p-4 rounded-2xl bg-surface-1 border border-border-subtle">
-          <span className="text-[10px] font-mono text-text-muted uppercase block">
+          <span className="text-xs font-mono text-text-muted uppercase block">
             Total Capacity
           </span>
           <p className="text-2xl font-bold font-mono text-text-primary mt-1">
             {totalCapacity}{" "}
             <span className="text-xs text-text-muted font-sans font-normal">
-              Crew
+              People
             </span>
-          </p>
-        </div>
-        <div className="p-4 rounded-2xl bg-surface-1 border border-border-subtle">
-          <span className="text-[10px] font-mono text-text-muted uppercase block">
-            Catalog Status
-          </span>
-          <p className="text-xs font-bold text-emerald-400 mt-2.5 flex items-center gap-1.5 font-mono">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Atlas Live Sync</span>
           </p>
         </div>
       </div>

@@ -20,6 +20,26 @@ export interface Studio {
   createdAt?: string | Date;
 }
 
+export interface Booking {
+  _id: string;
+  studioId: string;
+  studioTitle: string;
+  studioImage: string;
+  studioLocation?: string;
+  category?: string;
+  hourlyRate: number;
+  renterEmail: string;
+  renterName: string;
+  date: string;
+  hours: number;
+  callTime: string;
+  wrapTime: string;
+  totalAmount: number;
+  specialNotes?: string;
+  status: "CONFIRMED" | "PENDING" | "COMPLETED" | "CANCELLED";
+  createdAt?: string | Date;
+}
+
 export interface FilterState {
   search: string;
   category: string;

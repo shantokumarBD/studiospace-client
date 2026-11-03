@@ -23,8 +23,10 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
-import { Studio } from "@/Types";
+import { Studio, Booking } from "@/Types";
 import { useSession } from "@/lib/auth-client";
+import { createBooking } from "@/lib/api";
+import confetti from "canvas-confetti";
 
 interface StudioDetailsViewProps {
   studio: Studio;
@@ -39,6 +41,46 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
   const [callTime, setCallTime] = useState("08:00");
   const [wrapTime, setWrapTime] = useState("18:00");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  const fireCelebration = () => {
+    const count = 180;
+    const defaults = {
+      origin: { y: 0.7 },
+      zIndex: 9999,
+    };
+
+    const fire = (particleRatio: number, opts: confetti.Options) => {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio),
+      });
+    };
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    fire(0.2, {
+      spread: 60,
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2,
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
+  };
 
   const callHour = parseInt(callTime.split(":")[0]) || 8;
   const wrapHour = parseInt(wrapTime.split(":")[0]) || 18;
@@ -75,14 +117,16 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
       return;
     }
 
+    setBookingSuccess(false);
     setIsModalOpen(true);
   };
 
-  const handleConfirmBooking = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleConfirmBooking = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = (formData.get("renterName") as string) || "";
     const email = (formData.get("renterEmail") as string) || "";
+    const specialNotes = (formData.get("specialNotes") as string) || "";
 
     if (!name.trim() || !email.trim()) {
       toast.error("Please enter your name and email to proceed");
@@ -90,11 +134,36 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const payload: Partial<Booking> = {
+        studioId: studio._id,
+        studioTitle: studio.title,
+        studioImage: studio.image,
+        studioLocation: studio.location,
+        category: studio.category,
+        hourlyRate: studio.hourlyRate,
+        renterName: name,
+        renterEmail: email,
+        date: selectedDate,
+        hours: totalHours,
+        callTime,
+        wrapTime,
+        totalAmount,
+        specialNotes,
+      };
+
+      const result = await createBooking(payload);
+      if (result.success) {
+        setBookingSuccess(true);
+        fireCelebration();
+      } else {
+        toast.error(result.message || "Failed to submit booking");
+      }
+    } catch {
+      toast.error("Server connection failed");
+    } finally {
       setIsSubmitting(false);
-      setIsModalOpen(false);
-      toast.success("Booking request submitted! Status: PENDING");
-    }, 600);
+    }
   };
 
   return (
@@ -416,113 +485,194 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
             <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
               <div>
                 <span className="font-mono text-xs text-brand-orange font-bold uppercase tracking-wider">
-                  CONFIRM PRODUCTION RESERVATION
+                  {bookingSuccess
+                    ? "RESERVATION CONFIRMED"
+                    : "CONFIRM PRODUCTION RESERVATION"}
                 </span>
                 <h3 className="text-xl font-bold text-text-primary mt-1">
                   {studio.title}
                 </h3>
               </div>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  if (bookingSuccess) {
+                    setBookingSuccess(false);
+                    router.push("/my-bookings");
+                  }
+                }}
                 className="p-2 rounded-xl bg-surface-2 hover:bg-surface-3 text-text-muted hover:text-text-primary transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleConfirmBooking} className="flex flex-col gap-4">
+            {bookingSuccess ? (
+              <div className="py-4 flex flex-col items-center text-center gap-5">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+                    <CheckCircle2 className="w-10 h-10" />
+                  </div>
+                  <Sparkles className="absolute -top-1 -right-1 w-6 h-6 text-brand-orange animate-pulse" />
+                </div>
 
-              <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-surface-2 border border-border-subtle font-mono text-xs">
                 <div>
-                  <span className="text-text-muted block">SHOOT DATE</span>
-                  <span className="font-bold text-text-primary">{selectedDate}</span>
+                  <span className="font-mono text-xs text-brand-orange font-bold uppercase tracking-wider block mb-1">
+                    CONGRATULATIONS!
+                  </span>
+                  <h3 className="text-2xl font-black text-text-primary tracking-tight">
+                    Reservation Confirmed
+                  </h3>
+                  <p className="text-xs sm:text-sm text-text-secondary mt-1.5 max-w-sm">
+                    Your stage slot for{" "}
+                    <strong className="text-text-primary">{studio.title}</strong>{" "}
+                    has been successfully locked on schedule.
+                  </p>
                 </div>
-                <div>
-                  <span className="text-text-muted block">HOURS ({totalHours}h)</span>
-                  <span className="font-bold text-text-primary">{callTime} – {wrapTime}</span>
+
+                <div className="w-full grid grid-cols-2 gap-3 p-4 rounded-2xl bg-surface-2 border border-border-subtle font-mono text-xs">
+                  <div>
+                    <span className="text-text-muted block text-[10px]">
+                      SHOOT DATE
+                    </span>
+                    <span className="font-bold text-text-primary">
+                      {selectedDate}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-text-muted block text-[10px]">
+                      TIME BLOCK
+                    </span>
+                    <span className="font-bold text-text-primary">
+                      {callTime} – {wrapTime} ({totalHours}h)
+                    </span>
+                  </div>
+                  <div className="col-span-2 pt-2 border-t border-border-subtle/60 flex justify-between items-center">
+                    <span className="text-text-muted">TOTAL RESERVATION</span>
+                    <span className="text-base font-black text-emerald-400">
+                      ${totalAmount}
+                    </span>
+                  </div>
                 </div>
-                <div className="col-span-2 pt-2 border-t border-border-subtle/60 flex justify-between items-center">
-                  <span className="text-text-muted">TOTAL PRODUCTION LOCK</span>
-                  <span className="text-base font-black text-brand-orange">${totalAmount}</span>
+
+                <div className="w-full flex flex-col sm:flex-row items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      setBookingSuccess(false);
+                    }}
+                    className="w-full sm:w-1/2 py-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-border-subtle font-mono text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      setBookingSuccess(false);
+                      router.push("/my-bookings");
+                    }}
+                    className="w-full sm:w-1/2 py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.4)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>View in My Bookings</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
+            ) : (
+              <form onSubmit={handleConfirmBooking} className="flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-surface-2 border border-border-subtle font-mono text-xs">
+                  <div>
+                    <span className="text-text-muted block">SHOOT DATE</span>
+                    <span className="font-bold text-text-primary">{selectedDate}</span>
+                  </div>
+                  <div>
+                    <span className="text-text-muted block">HOURS ({totalHours}h)</span>
+                    <span className="font-bold text-text-primary">{callTime} – {wrapTime}</span>
+                  </div>
+                  <div className="col-span-2 pt-2 border-t border-border-subtle/60 flex justify-between items-center">
+                    <span className="text-text-muted">TOTAL PRODUCTION LOCK</span>
+                    <span className="text-base font-black text-brand-orange">${totalAmount}</span>
+                  </div>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-text-secondary uppercase">
-                  Creator / Renter Full Name
-                </label>
-                <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
-                  <User className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
-                  <input
-                    type="text"
-                    name="renterName"
-                    required
-                    placeholder="Marcus Vance"
-                    defaultValue={session?.user?.name || ""}
-                    className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-text-secondary uppercase">
+                    Creator / Renter Full Name
+                  </label>
+                  <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
+                    <User className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
+                    <input
+                      type="text"
+                      name="renterName"
+                      required
+                      placeholder="Marcus Vance"
+                      defaultValue={session?.user?.name || ""}
+                      className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-text-secondary uppercase">
+                    Renter Email Address
+                  </label>
+                  <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
+                    <Mail className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
+                    <input
+                      type="email"
+                      name="renterEmail"
+                      required
+                      placeholder="creator@production.io"
+                      defaultValue={session?.user?.email || ""}
+                      className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-text-secondary uppercase">
+                    Special Production Notes (Optional)
+                  </label>
+                  <textarea
+                    name="specialNotes"
+                    rows={2}
+                    placeholder="Need freight elevator access, lighting packages..."
+                    className="w-full bg-film-black border border-border-subtle rounded-xl p-3 text-text-primary text-xs focus:outline-none resize-none"
                   />
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-text-secondary uppercase">
-                  Renter Email Address
-                </label>
-                <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
-                  <Mail className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
-                  <input
-                    type="email"
-                    name="renterEmail"
-                    required
-                    placeholder="creator@production.io"
-                    defaultValue={session?.user?.email || ""}
-                    className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
-                  />
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-[11px] text-brand-orange font-mono">
+                  <span className="w-2 h-2 rounded-full bg-brand-orange shrink-0 animate-ping" />
+                  <span>New reservations are submitted with initial status: PENDING</span>
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-text-secondary uppercase">
-                  Special Production Notes (Optional)
-                </label>
-                <textarea
-                  name="specialNotes"
-                  rows={2}
-                  placeholder="Need freight elevator access, lighting packages..."
-                  className="w-full bg-film-black border border-border-subtle rounded-xl p-3 text-text-primary text-xs focus:outline-none resize-none"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-[11px] text-brand-orange font-mono">
-                <span className="w-2 h-2 rounded-full bg-brand-orange shrink-0 animate-ping" />
-                <span>New reservations are submitted with initial status: PENDING</span>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-3 border border-border-subtle font-mono text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.4)] hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-2 disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <span>Submitting Request...</span>
-                  ) : (
-                    <>
-                      <span>Confirm Reservation</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              </div>
-
-            </form>
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-3 border border-border-subtle font-mono text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_20px_rgba(224,79,38,0.4)] hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <span>Submitting Request...</span>
+                    ) : (
+                      <>
+                        <span>Confirm Reservation</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
 
           </div>
         </div>
