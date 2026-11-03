@@ -300,14 +300,13 @@ export default function MyListingsClient({
                   <span>View</span>
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={() => setEditingStudio(studio)}
+                <Link
+                  href={`/studios/edit/${studio._id}`}
                   className="px-3.5 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 border border-border-subtle text-text-secondary hover:text-brand-orange text-xs font-mono font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   <span>Edit</span>
-                </button>
+                </Link>
 
                 <button
                   type="button"
