@@ -10,11 +10,10 @@ import {
   ArrowRight,
   Loader2,
   BookmarkCheck,
-  RotateCw,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { WishlistItem } from "@/Types";
-import { removeFromWishlist, getMyWishlist } from "@/lib/api";
+import { removeFromWishlist } from "@/lib/api";
 import { GetTokenFormClient } from "@/lib/gettokenformClient";
 
 interface WishlistClientProps {
@@ -31,22 +30,6 @@ export default function WishlistClient({
 }: WishlistClientProps) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist);
   const [removingId, setRemovingId] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
-
-  const handleSync = async () => {
-    if (!user?.email) return;
-    setIsSyncing(true);
-    try {
-      const token = await GetTokenFormClient();
-      const items = await getMyWishlist(user.email, token);
-      setWishlist(items);
-      toast.success("Wishlist synchronized");
-    } catch {
-      toast.error("Failed to sync wishlist");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const handleRemove = async (id: string, title: string) => {
     setRemovingId(id);
@@ -79,17 +62,6 @@ export default function WishlistClient({
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleSync}
-            disabled={isSyncing}
-            className="px-3.5 py-2 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border-subtle flex items-center gap-2 font-mono text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer disabled:opacity-50"
-            title="Sync wishlist"
-          >
-            <RotateCw className={`w-3.5 h-3.5 text-brand-orange ${isSyncing ? "animate-spin" : ""}`} />
-            <span>Sync</span>
-          </button>
-
           <div className="px-4 py-2 rounded-2xl bg-surface-1 border border-border-subtle flex items-center gap-2 font-mono text-xs">
             <BookmarkCheck className="w-4 h-4 text-brand-orange" />
             <span className="text-text-muted">Saved:</span>

@@ -158,7 +158,7 @@ export default function MyListingsClient({
           className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/20 cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Add New Studio</span>
+          <span>Add New Studio</span>
         </Link>
       </div>
 
