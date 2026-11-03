@@ -7,9 +7,6 @@ import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import WishlistClient from "@/components/Wishlist/WishlistClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export const metadata = {
   title: "Saved Wishlist | StudioSpace",
   description: "Your saved production stages and creative studios.",
