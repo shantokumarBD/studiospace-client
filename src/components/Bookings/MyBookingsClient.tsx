@@ -102,6 +102,14 @@ export default function MyBookingsClient({
         </span>
       );
     }
+    if (s.includes("complete")) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px] font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+          <span>Completed</span>
+        </span>
+      );
+    }
     if (s.includes("confirm")) {
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[11px] font-semibold">

@@ -186,7 +186,7 @@ export default function Hero() {
                           <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#22C55E]" />
                             <span className="font-mono text-[11px] sm:text-xs font-semibold text-[#22C55E]">
-                              ● Available Today
+                              ● Verified Stage
                             </span>
                           </div>
                           <div className="flex items-center gap-1 text-brand-amber">

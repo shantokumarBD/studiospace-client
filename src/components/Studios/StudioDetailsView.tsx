@@ -42,7 +42,11 @@ export default function StudioDetailsView({
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(initialIsSaved);
-  const [selectedDate, setSelectedDate] = useState("2026-11-15");
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  });
   const [callTime, setCallTime] = useState("08:00");
   const [wrapTime, setWrapTime] = useState("18:00");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -167,6 +171,11 @@ export default function StudioDetailsView({
 
     if (!name.trim() || !email.trim()) {
       toast.error("Please enter your name and email to proceed");
+      return;
+    }
+
+    if (wrapHour <= callHour) {
+      toast.error("Wrap time must be later than call time");
       return;
     }
 
@@ -428,6 +437,7 @@ export default function StudioDetailsView({
                     <Calendar className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
                     <input
                       type="date"
+                      min={new Date().toISOString().split("T")[0]}
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
                       className="w-full bg-transparent text-text-primary text-xs focus:outline-none cursor-pointer"

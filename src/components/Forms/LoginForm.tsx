@@ -230,12 +230,18 @@ export function LoginForm({
                       >
                         MASTER PASSWORD
                       </FieldLabel>
-                      <Link
-                        href="#"
-                        className="font-mono text-[9px] text-brand-orange hover:underline hover:text-brand-amber transition-colors"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast(
+                            "Password reset is disabled for evaluation convenience.",
+                            { icon: "ℹ️" }
+                          )
+                        }
+                        className="font-mono text-[9px] text-brand-orange hover:underline hover:text-brand-amber transition-colors cursor-pointer"
                       >
                         Forgot password?
-                      </Link>
+                      </button>
                     </div>
                     <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
                       <Lock className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
