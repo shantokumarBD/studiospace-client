@@ -27,8 +27,9 @@ export const signUpSchema = z.object({
     .or(z.literal("")),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters"),
+    .min(6, "Password must be at least 6 characters")
+    .refine((val) => /[A-Z]/.test(val), "Password must contain at least one uppercase letter")
+    .refine((val) => /[a-z]/.test(val), "Password must contain at least one lowercase letter"),
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
-

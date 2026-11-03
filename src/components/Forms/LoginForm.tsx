@@ -70,7 +70,9 @@ export function LoginForm({
   };
 
   const handleGoogleLogin = async () => {
-    toast("Google Workspace sign-in coming soon!");
+    const data = await signIn.social({
+      provider: "google"
+    })
   };
 
   return (
