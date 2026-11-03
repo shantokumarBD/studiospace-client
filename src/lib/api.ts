@@ -15,8 +15,7 @@ export async function getFeaturedStudios(): Promise<Studio[]> {
     });
     const json = await res.json();
     return json?.data || [];
-  } catch (error) {
-    console.error("Failed to fetch featured studios:", error);
+  } catch {
     return [];
   }
 }
@@ -28,8 +27,7 @@ export async function getAllStudios(): Promise<Studio[]> {
     });
     const json = await res.json();
     return json?.data || [];
-  } catch (error) {
-    console.error("Failed to fetch studios:", error);
+  } catch {
     return [];
   }
 }
@@ -41,8 +39,7 @@ export async function getSingleStudio(id: string): Promise<Studio | null> {
     });
     const json = await res.json();
     return json?.data || null;
-  } catch (error) {
-    console.error("Failed to fetch studio details:", error);
+  } catch {
     return null;
   }
 }

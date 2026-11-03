@@ -6,9 +6,10 @@
 
 ## 🌐 Live Website & Repositories
 
-- **Live URL**: [https://studiospace-client.vercel.app](https://studiospace-client.vercel.app) *(or your deployed Vercel URL)*
-- **Client Repository**: `https://github.com/Shanto/studiospace-client`
-- **Server Repository**: `https://github.com/Shanto/studiospace-server`
+- **Live Client URL**: [https://studiospace-client-bd.vercel.app](https://studiospace-client-bd.vercel.app)
+- **Live Server API**: [https://studiospace-server-sem6.onrender.com](https://studiospace-server-sem6.onrender.com)
+- **Client Repository**: [https://github.com/shantokumarBD/studiospace-client](https://github.com/shantokumarBD/studiospace-client)
+- **Server Repository**: [https://github.com/shantokumarBD/studiospace-server](https://github.com/shantokumarBD/studiospace-server)
 
 ---
 
