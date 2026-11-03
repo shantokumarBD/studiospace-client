@@ -31,7 +31,9 @@ export const metadata: Metadata = {
   description:
     "Discover, filter, and reserve professional creative production studios, photo cyc walls, sound stages, and podcast rooms with transparent pricing.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
 };
 
