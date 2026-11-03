@@ -7,15 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { useSession } from "@/lib/auth-client";
 
 export const studioCategories = [
-  "Soundstage",
-  "Photography",
-  "Podcast",
+  "Photo Studios",
+  "Sound Stages",
+  "Podcast Rooms",
+  "Music Suites",
+  "Art Workshops",
   "Virtual Production",
   "Dance & Rehearsal",
   "Film Set",
-  "Recording Studio",
 ];
 
 interface StudioFormProps {
@@ -33,6 +35,10 @@ export default function StudioForm({
   submitText = "Save Studio",
   onCancel,
 }: StudioFormProps) {
+  const { data: session } = useSession();
+  const hostName = initialData?.ownerName || session?.user?.name || "Verified Studio Host";
+  const hostEmail = initialData?.ownerEmail || session?.user?.email || "";
+
   return (
     <form onSubmit={onSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="space-y-1.5 sm:col-span-2">
@@ -56,7 +62,7 @@ export default function StudioForm({
         <NativeSelect
           id="category"
           name="category"
-          defaultValue={initialData?.category || "Soundstage"}
+          defaultValue={initialData?.category || "Sound Stages"}
           className="w-full bg-film-black border-border-subtle"
         >
           {studioCategories.map((cat) => (
@@ -146,7 +152,7 @@ export default function StudioForm({
           name="image"
           type="url"
           defaultValue={initialData?.image || ""}
-          placeholder="https://images.unsplash.com/photo-..."
+          placeholder="https://images.unsplash.com/photo-... (or paste ImgBB / PostImage URL)"
           required
           className="bg-film-black border-border-subtle"
         />
@@ -185,6 +191,32 @@ export default function StudioForm({
         />
       </div>
 
+      <div className="space-y-1.5">
+        <Label htmlFor="ownerName" className="text-xs text-text-secondary uppercase font-semibold">
+          Host Name (Read-Only)
+        </Label>
+        <Input
+          id="ownerName"
+          name="ownerName"
+          value={hostName}
+          readOnly
+          className="bg-surface-2/60 border-border-subtle text-text-muted cursor-not-allowed font-mono text-xs"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="ownerEmail" className="text-xs text-text-secondary uppercase font-semibold">
+          Host Email (Read-Only)
+        </Label>
+        <Input
+          id="ownerEmail"
+          name="ownerEmail"
+          value={hostEmail}
+          readOnly
+          className="bg-surface-2/60 border-border-subtle text-text-muted cursor-not-allowed font-mono text-xs"
+        />
+      </div>
+
       <div className="sm:col-span-2 pt-2 flex items-center justify-end gap-3">
         {onCancel && (
           <Button
@@ -216,4 +248,3 @@ export default function StudioForm({
     </form>
   );
 }
-

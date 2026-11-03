@@ -55,7 +55,7 @@ export default function StudioFilter({
         </label>
         <div className="flex flex-col gap-1">
           {categories.map((cat) => {
-            const isActive = filters.category.toLowerCase() === cat.toLowerCase();
+            const isActive = filters.category.toLowerCase().trim() === cat.toLowerCase().trim();
             return (
               <button
                 key={cat}

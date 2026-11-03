@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchX } from "lucide-react";
 import toast from "react-hot-toast";
@@ -24,7 +24,8 @@ export default function StudiosExplorer({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
-  const initialCategory = searchParams.get("category") || "All Categories";
+  const rawCategory = searchParams.get("category");
+  const initialCategory = rawCategory ? rawCategory.replace(/\+/g, " ") : "All Categories";
 
   const categories = [
     "All Categories",
@@ -41,6 +42,16 @@ export default function StudiosExplorer({
   const [wishlist, setWishlist] = useState<string[]>(initialWishlistIds);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
+
+  useEffect(() => {
+    const urlCategory = searchParams.get("category");
+    if (urlCategory) {
+      setFilters((prev) => ({ ...prev, category: urlCategory.replace(/\+/g, " ") }));
+      setCurrentPage(1);
+    } else {
+      setFilters((prev) => ({ ...prev, category: "All Categories" }));
+    }
+  }, [searchParams]);
 
   const toggleWishlist = async (id: string) => {
     if (!session?.user?.email) {
@@ -112,9 +123,19 @@ export default function StudiosExplorer({
 
   const filteredStudios = initialStudios
     .filter((studio) => {
+      const catFilter = filters.category.toLowerCase().trim();
+      const studioCat = (studio.category || "").toLowerCase().trim();
+
       const matchesCategory =
         filters.category === "All Categories" ||
-        studio.category.toLowerCase() === filters.category.toLowerCase();
+        studioCat === catFilter ||
+        studioCat.includes(catFilter) ||
+        catFilter.includes(studioCat) ||
+        (catFilter.includes("photo") && studioCat.includes("photo")) ||
+        (catFilter.includes("sound") && studioCat.includes("sound")) ||
+        (catFilter.includes("podcast") && studioCat.includes("podcast")) ||
+        (catFilter.includes("music") && (studioCat.includes("music") || studioCat.includes("recording"))) ||
+        (catFilter.includes("art") && (studioCat.includes("art") || studioCat.includes("dance")));
 
       const matchesSearch =
         filters.search === "" ||
