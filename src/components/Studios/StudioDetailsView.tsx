@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
   Star,
@@ -23,20 +24,20 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Studio } from "@/Types";
+import { useSession } from "@/lib/auth-client";
 
 interface StudioDetailsViewProps {
   studio: Studio;
 }
 
 export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [selectedDate, setSelectedDate] = useState("2026-11-15");
   const [callTime, setCallTime] = useState("08:00");
   const [wrapTime, setWrapTime] = useState("18:00");
-  const [renterName, setRenterName] = useState("");
-  const [renterEmail, setRenterEmail] = useState("");
-  const [specialNotes, setSpecialNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const callHour = parseInt(callTime.split(":")[0]) || 8;
@@ -62,17 +63,37 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
     }
   };
 
-  const handleConfirmBooking = (e: React.FormEvent) => {
+  const handleOpenBooking = () => {
+    if (!session?.user) {
+      toast.error("Please log in to book this workspace");
+      router.push(`/log-in?callbackUrl=/studios/${studio._id}`);
+      return;
+    }
+
+    if (session.user.email === studio.ownerEmail) {
+      toast.error("This is your studio listing. You cannot book your own space.");
+      return;
+    }
+
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmBooking = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!renterName.trim() || !renterEmail.trim()) {
+    const formData = new FormData(e.currentTarget);
+    const name = (formData.get("renterName") as string) || "";
+    const email = (formData.get("renterEmail") as string) || "";
+
+    if (!name.trim() || !email.trim()) {
       toast.error("Please enter your name and email to proceed");
       return;
     }
+
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
       setIsModalOpen(false);
-      toast.success(`Booking request submitted! Status: PENDING`);
+      toast.success("Booking request submitted! Status: PENDING");
     }, 600);
   };
 
@@ -367,7 +388,7 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
               </div>
 
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleOpenBooking}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-sm font-bold shadow-[0_0_24px_rgba(224,79,38,0.4)] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2"
               >
                 <span>Book Workspace Now</span>
@@ -434,10 +455,10 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
                   <User className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
                   <input
                     type="text"
+                    name="renterName"
                     required
                     placeholder="Marcus Vance"
-                    value={renterName}
-                    onChange={(e) => setRenterName(e.target.value)}
+                    defaultValue={session?.user?.name || ""}
                     className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
                   />
                 </div>
@@ -451,10 +472,10 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
                   <Mail className="w-4 h-4 text-text-muted mr-2.5 shrink-0" />
                   <input
                     type="email"
+                    name="renterEmail"
                     required
                     placeholder="creator@production.io"
-                    value={renterEmail}
-                    onChange={(e) => setRenterEmail(e.target.value)}
+                    defaultValue={session?.user?.email || ""}
                     className="w-full bg-transparent text-text-primary text-xs focus:outline-none"
                   />
                 </div>
@@ -465,10 +486,9 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
                   Special Production Notes (Optional)
                 </label>
                 <textarea
+                  name="specialNotes"
                   rows={2}
                   placeholder="Need freight elevator access, lighting packages..."
-                  value={specialNotes}
-                  onChange={(e) => setSpecialNotes(e.target.value)}
                   className="w-full bg-film-black border border-border-subtle rounded-xl p-3 text-text-primary text-xs focus:outline-none resize-none"
                 />
               </div>
