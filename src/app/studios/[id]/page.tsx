@@ -1,19 +1,35 @@
 import { Suspense } from "react";
-import { connection } from "next/server";
-import { getSingleStudio } from "@/lib/api";
-import StudioDetailsView from "@/components/Studios/StudioDetailsView";
-import ModernLoader from "@/components/Shared/ModernLoader";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { getSingleStudio, getMyWishlist } from "@/lib/api";
+import StudioDetailsView from "@/components/Studios/StudioDetailsView";
+import ModernLoader from "@/components/Shared/ModernLoader";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-async function StudioContent({ params }: PageProps) {
-  await connection();
+export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const studio = await getSingleStudio(id);
+  return {
+    title: studio ? `${studio.title} | StudioSpace` : "Studio Details | StudioSpace",
+    description: studio?.overview || "Explore production stage and creative studio specs.",
+  };
+}
+
+async function StudioContent({ params }: PageProps) {
+  const { id } = await params;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const [studio, wishlist] = await Promise.all([
+    getSingleStudio(id),
+    session?.user?.email ? getMyWishlist(session.user.email) : Promise.resolve([]),
+  ]);
 
   if (!studio) {
     return (
@@ -35,7 +51,9 @@ async function StudioContent({ params }: PageProps) {
     );
   }
 
-  return <StudioDetailsView studio={studio} />;
+  const isSaved = wishlist.some((item) => item.studioId === id);
+
+  return <StudioDetailsView studio={studio} initialIsSaved={isSaved} />;
 }
 
 export default function StudioDetailsPage({ params }: PageProps) {

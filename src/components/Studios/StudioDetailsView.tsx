@@ -25,18 +25,22 @@ import {
 } from "lucide-react";
 import { Studio, Booking } from "@/Types";
 import { useSession } from "@/lib/auth-client";
-import { createBooking } from "@/lib/api";
+import { createBooking, addToWishlist, removeFromWishlist } from "@/lib/api";
 import confetti from "canvas-confetti";
 
 interface StudioDetailsViewProps {
   studio: Studio;
+  initialIsSaved?: boolean;
 }
 
-export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
+export default function StudioDetailsView({
+  studio,
+  initialIsSaved = false,
+}: StudioDetailsViewProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(initialIsSaved);
   const [selectedDate, setSelectedDate] = useState("2026-11-15");
   const [callTime, setCallTime] = useState("08:00");
   const [wrapTime, setWrapTime] = useState("18:00");
@@ -96,12 +100,42 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
     }
   };
 
-  const handleToggleWishlist = () => {
-    setIsSaved(!isSaved);
+  const handleToggleWishlist = async () => {
+    if (!session?.user?.email) {
+      toast.error("Please sign in to save studios to your wishlist");
+      router.push(`/log-in?callbackUrl=/studios/${studio._id}`);
+      return;
+    }
+
     if (!isSaved) {
-      toast.success("Added to your saved wishlist!");
+      setIsSaved(true);
+      try {
+        const result = await addToWishlist({
+          studioId: studio._id,
+          userEmail: session.user.email,
+          title: studio.title,
+          image: studio.image,
+          location: studio.location,
+          hourlyRate: studio.hourlyRate,
+          category: studio.category,
+          rating: studio.rating,
+        });
+        if (result.success) {
+          toast.success("Added to your saved wishlist!");
+        }
+      } catch {
+        toast.error("Failed to add to wishlist");
+        setIsSaved(false);
+      }
     } else {
-      toast("Removed from wishlist", { icon: "ℹ️" });
+      setIsSaved(false);
+      try {
+        await removeFromWishlist(studio._id);
+        toast.success("Removed from wishlist");
+      } catch {
+        toast.error("Failed to remove from wishlist");
+        setIsSaved(true);
+      }
     }
   };
 
@@ -150,6 +184,7 @@ export default function StudioDetailsView({ studio }: StudioDetailsViewProps) {
         wrapTime,
         totalAmount,
         specialNotes,
+        status: "Pending Host Approval",
       };
 
       const result = await createBooking(payload);

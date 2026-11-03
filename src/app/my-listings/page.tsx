@@ -1,6 +1,5 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { getMyStudios } from "@/lib/api";
 import MyListingsClient from "@/components/Studios/MyListingsClient";
@@ -11,8 +10,6 @@ export const metadata = {
 };
 
 export default async function MyListingsPage() {
-  await connection();
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });

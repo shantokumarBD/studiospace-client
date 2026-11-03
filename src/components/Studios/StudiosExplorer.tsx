@@ -1,19 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchX } from "lucide-react";
+import toast from "react-hot-toast";
 import { Studio, FilterState } from "@/Types";
+import { useSession } from "@/lib/auth-client";
+import { addToWishlist, removeFromWishlist } from "@/lib/api";
 import StudioCard from "./StudioCard";
 import StudioFilter from "./StudioFilter";
 import Pagination from "@/components/Shared/Pagination";
 
 interface StudiosExplorerProps {
   initialStudios: Studio[];
+  initialWishlistIds?: string[];
 }
 
-export default function StudiosExplorer({ initialStudios }: StudiosExplorerProps) {
+export default function StudiosExplorer({
+  initialStudios,
+  initialWishlistIds = [],
+}: StudiosExplorerProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const initialCategory = searchParams.get("category") || "All Categories";
 
   const categories = [
@@ -28,14 +37,59 @@ export default function StudiosExplorer({ initialStudios }: StudiosExplorerProps
     sort: "default",
   });
 
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>(initialWishlistIds);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
-  const toggleWishlist = (id: string) => {
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  const toggleWishlist = async (id: string) => {
+    if (!session?.user?.email) {
+      toast.error("Please sign in to save studios to your wishlist");
+      router.push("/log-in");
+      return;
+    }
+
+    const isSaved = wishlist.includes(id);
+    const studio = initialStudios.find((s) => s._id === id);
+    if (!studio) return;
+
+    if (!isSaved) {
+      setWishlist((prev) => [...prev, id]);
+      try {
+        const result = await addToWishlist({
+          studioId: studio._id,
+          userEmail: session.user.email,
+          title: studio.title,
+          image: studio.image,
+          location: studio.location,
+          hourlyRate: studio.hourlyRate,
+          category: studio.category,
+          rating: studio.rating,
+        });
+        if (result.success) {
+          toast.success("Studio added to your wishlist!");
+        } else {
+          setWishlist((prev) => prev.filter((item) => item !== id));
+          toast.error(result.message || "Failed to add to wishlist");
+        }
+      } catch {
+        setWishlist((prev) => prev.filter((item) => item !== id));
+        toast.error("Failed to add to wishlist");
+      }
+    } else {
+      setWishlist((prev) => prev.filter((item) => item !== id));
+      try {
+        const result = await removeFromWishlist(id);
+        if (result.success) {
+          toast.success("Studio removed from wishlist");
+        } else {
+          setWishlist((prev) => [...prev, id]);
+          toast.error(result.message || "Failed to remove from wishlist");
+        }
+      } catch {
+        setWishlist((prev) => [...prev, id]);
+        toast.error("Failed to remove from wishlist");
+      }
+    }
   };
 
   const handleFilterChange = (name: keyof FilterState, value: string) => {

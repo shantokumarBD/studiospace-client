@@ -1,6 +1,5 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { getMyBookings } from "@/lib/api";
 import MyBookingsClient from "@/components/Bookings/MyBookingsClient";
@@ -11,8 +10,6 @@ export const metadata = {
 };
 
 export default async function MyBookingsPage() {
-  await connection();
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });

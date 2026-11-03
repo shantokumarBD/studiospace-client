@@ -1,13 +1,33 @@
 import { Suspense } from "react";
-import { connection } from "next/server";
-import { getAllStudios } from "@/lib/api";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { getAllStudios, getMyWishlist } from "@/lib/api";
 import StudiosExplorer from "@/components/Studios/StudiosExplorer";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
+export const metadata = {
+  title: "Explore Studios | StudioSpace",
+  description: "Browse film stages, soundstages, photo lofts, and creative production spaces.",
+};
+
 async function StudiosData() {
-  await connection();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   const studios = await getAllStudios();
-  return <StudiosExplorer initialStudios={studios} />;
+  const wishlist = session?.user?.email
+    ? await getMyWishlist(session.user.email)
+    : [];
+
+  const initialWishlistIds = wishlist.map((item) => item.studioId);
+
+  return (
+    <StudiosExplorer
+      initialStudios={studios}
+      initialWishlistIds={initialWishlistIds}
+    />
+  );
 }
 
 export default function StudiosPage() {
