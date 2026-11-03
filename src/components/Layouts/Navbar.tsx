@@ -3,6 +3,7 @@ import NavLinks from "../Shared/NavLinks";
 import AuthButtons from "../Shared/AuthButtons";
 import MobileNav from "../Shared/MobileNav";
 import Logo from "../Shared/Logo";
+import ThemeToggle from "../Shared/ThemeToggle";
 
 export default function Navbar() {
   return (
@@ -19,6 +20,7 @@ export default function Navbar() {
         </Suspense>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <AuthButtons />
           <Suspense fallback={<div className="lg:hidden w-9 h-9" />}>
             <MobileNav />

@@ -44,8 +44,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("dark", "bg-[#080807]", "text-[#F0EFE9]", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
+      className={cn("dark", "bg-film-black", "text-text-primary", "antialiased", "min-h-screen", "flex", "flex-col", "selection:bg-[#E04F26]", "selection:text-white", plusJakarta.variable, dmSans.variable, jetbrainsMono.variable, "font-sans", geist.variable)}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.theme==='light'){document.documentElement.classList.remove('dark')}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Toaster position="top-center" />
         <Navbar />

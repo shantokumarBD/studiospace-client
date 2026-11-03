@@ -11,7 +11,7 @@ export default async function FeaturedStudios() {
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 relative z-10">
         <div className="relative text-center max-w-3xl mx-auto mb-14 sm:mb-16">
-          <span className="absolute -top-8 sm:-top-12 md:-top-14 left-1/2 -translate-x-1/2 font-extrabold text-6xl sm:text-8xl md:text-9xl text-white/[0.04] select-none pointer-events-none tracking-widest uppercase">
+          <span className="absolute -top-8 sm:-top-12 md:-top-14 left-1/2 -translate-x-1/2 font-extrabold text-6xl sm:text-8xl md:text-9xl text-text-primary/10 select-none pointer-events-none tracking-widest uppercase">
             FEATURED
           </span>
 

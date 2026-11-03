@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
+import Logo from "./Logo";
 import { navItems } from "./NavLinks";
 import {
   Sheet,
@@ -53,9 +54,9 @@ export default function MobileNav() {
         >
           <div>
             <SheetHeader className="text-left pb-4 border-b border-border-subtle">
-              <SheetTitle className="text-text-primary font-bold">
-                Studio<span className="text-brand-orange">Space</span>
-              </SheetTitle>
+              <div onClick={() => setOpen(false)}>
+                <Logo size="sm" />
+              </div>
             </SheetHeader>
 
             <div className="flex flex-col gap-1.5 py-4">

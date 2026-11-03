@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 :root {
+  --film-black: #FAFAF7;
+  --surface-1: #FFFFFF;
+  --surface-2: #F3F1EC;
+  --surface-3: #E8E5DC;
+  --border-subtle: #E0DDD4;
+  --text-primary: #121110;
+  --text-secondary: #58554E;
+  --text-muted: #8A877E;
   --font-sans: var(--font-body);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -92,6 +100,14 @@ code, pre, .font-mono {
 }
 
 .dark {
+  --film-black: #080807;
+  --surface-1: #0F0F0D;
+  --surface-2: #161614;
+  --surface-3: #1E1E1B;
+  --border-subtle: #252522;
+  --text-primary: #F0EFE9;
+  --text-secondary: #A09E97;
+  --text-muted: #5C5A55;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -138,16 +154,16 @@ code, pre, .font-mono {
 }
 
 @theme {
-  --color-film-black: #080807;
-  --color-surface-1: #0F0F0D;
-  --color-surface-2: #161614;
-  --color-surface-3: #1E1E1B;
-  --color-border-subtle: #252522;
+  --color-film-black: var(--film-black);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-subtle: var(--border-subtle);
   --color-brand-orange: #E04F26;
   --color-brand-amber: #F59E0B;
-  --color-text-primary: #F0EFE9;
-  --color-text-secondary: #A09E97;
-  --color-text-muted: #5C5A55;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
 }
 
 .brand-glow {

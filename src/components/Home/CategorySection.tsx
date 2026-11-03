@@ -69,7 +69,7 @@ export default function CategorySection() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 relative z-10">
         
         <div className="relative text-center max-w-2xl mx-auto mb-14 sm:mb-16">
-          <span className="absolute -top-8 sm:-top-12 md:-top-14 left-1/2 -translate-x-1/2 font-extrabold text-6xl sm:text-8xl md:text-9xl text-white/[0.04] select-none pointer-events-none tracking-widest uppercase">
+          <span className="absolute -top-8 sm:-top-12 md:-top-14 left-1/2 -translate-x-1/2 font-extrabold text-6xl sm:text-8xl md:text-9xl text-text-primary/10 select-none pointer-events-none tracking-widest uppercase">
             STUDIOS
           </span>
 
@@ -116,7 +116,7 @@ export default function CategorySection() {
                     <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
                       {cat.id} // TYPE
                     </span>
-                    <h3 className="font-bold text-lg text-text-primary mt-1 group-hover:text-white transition-colors">
+                    <h3 className="font-bold text-lg text-text-primary mt-1 group-hover:text-brand-orange transition-colors">
                       {cat.title}
                     </h3>
                     <p className="text-text-secondary text-xs mt-1.5 line-clamp-2 leading-relaxed">

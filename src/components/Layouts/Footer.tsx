@@ -32,7 +32,7 @@ const LinkedInIcon = () => (
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#060605] border-t border-[#1a1a18] relative mt-auto">
+    <footer className="w-full bg-surface-1 border-t border-border-subtle relative mt-auto transition-colors duration-200">
       {/* Top Gradient Accent Line */}
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand-orange to-transparent" />
 
@@ -41,7 +41,7 @@ export default function Footer() {
         {/* Top Bar: Logo + Live Platform Status */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-12 border-b border-border-subtle gap-4">
           <Logo size="sm" />
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-1 border border-border-subtle">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-2 border border-border-subtle">
             <span className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_8px_#22C55E] animate-pulse" />
             <span className="font-mono text-xs font-semibold text-[#22C55E] tracking-wider">
               ● PLATFORM STATUS: ONLINE
@@ -82,11 +82,11 @@ export default function Footer() {
               Studio Categories
             </h5>
             <ul className="space-y-2 text-xs">
-              <li><Link href="/studios?category=Photo+Studio" className="text-text-secondary hover:text-text-primary transition-colors">Photo Studio</Link></li>
-              <li><Link href="/studios?category=Sound+Stage" className="text-text-secondary hover:text-text-primary transition-colors">Sound Stage</Link></li>
-              <li><Link href="/studios?category=Podcast+Room" className="text-text-secondary hover:text-text-primary transition-colors">Podcast Room</Link></li>
-              <li><Link href="/studios?category=Music+Suite" className="text-text-secondary hover:text-text-primary transition-colors">Music Suite</Link></li>
-              <li><Link href="/studios?category=Art+Workshop" className="text-text-secondary hover:text-text-primary transition-colors">Art Workshop</Link></li>
+              <li><Link href="/studios?category=Photo Studios" className="text-text-secondary hover:text-text-primary transition-colors">Photo Studio</Link></li>
+              <li><Link href="/studios?category=Sound Stages" className="text-text-secondary hover:text-text-primary transition-colors">Sound Stage</Link></li>
+              <li><Link href="/studios?category=Podcast Rooms" className="text-text-secondary hover:text-text-primary transition-colors">Podcast Room</Link></li>
+              <li><Link href="/studios?category=Music Suites" className="text-text-secondary hover:text-text-primary transition-colors">Music Suite</Link></li>
+              <li><Link href="/studios?category=Art Workshops" className="text-text-secondary hover:text-text-primary transition-colors">Art Workshop</Link></li>
             </ul>
           </div>
 
@@ -109,19 +109,19 @@ export default function Footer() {
           
           <div className="flex items-center gap-3">
             {/* Instagram */}
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="w-9 h-9 rounded-full bg-surface-1 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-brand-orange hover:border-brand-orange/40 transition-all">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="w-9 h-9 rounded-full bg-surface-2 hover:bg-surface-3 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-brand-orange hover:border-brand-orange/40 transition-all">
               <InstagramIcon />
             </a>
             {/* Official Rebranded X Logo */}
-            <a href="https://x.com" target="_blank" rel="noreferrer" aria-label="X" className="w-9 h-9 rounded-full bg-surface-1 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-white hover:border-white/40 transition-all">
+            <a href="https://x.com" target="_blank" rel="noreferrer" aria-label="X" className="w-9 h-9 rounded-full bg-surface-2 hover:bg-surface-3 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-border-subtle transition-all">
               <XIcon />
             </a>
             {/* YouTube */}
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="w-9 h-9 rounded-full bg-surface-1 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-[#EF4444] hover:border-[#EF4444]/40 transition-all">
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="w-9 h-9 rounded-full bg-surface-2 hover:bg-surface-3 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-[#EF4444] hover:border-[#EF4444]/40 transition-all">
               <YouTubeIcon />
             </a>
             {/* LinkedIn */}
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="w-9 h-9 rounded-full bg-surface-1 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-[#3B82F6] hover:border-[#3B82F6]/40 transition-all">
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="w-9 h-9 rounded-full bg-surface-2 hover:bg-surface-3 border border-border-subtle flex items-center justify-center text-text-secondary hover:text-[#3B82F6] hover:border-[#3B82F6]/40 transition-all">
               <LinkedInIcon />
             </a>
           </div>
