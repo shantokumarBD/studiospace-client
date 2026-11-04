@@ -11,6 +11,7 @@ import { GetTokenFormClient } from "@/lib/gettokenformClient";
 import StudioCard from "./StudioCard";
 import StudioFilter from "./StudioFilter";
 import Pagination from "@/components/Shared/Pagination";
+import { Button } from "@/components/ui/button";
 
 interface StudiosExplorerProps {
   initialStudios: Studio[];
@@ -189,12 +190,13 @@ export default function StudiosExplorer({
                 <p className="text-text-secondary text-sm max-w-sm mb-6">
                   No studios match your current filter criteria. Try clearing search or resetting filters.
                 </p>
-                <button
+                <Button
+                  type="button"
                   onClick={handleReset}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-semibold shadow hover:opacity-90 transition-opacity cursor-pointer"
+                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-semibold shadow hover:opacity-90 transition-opacity cursor-pointer h-auto border-0"
                 >
                   Reset Filters
-                </button>
+                </Button>
               </div>
             ) : (
               <>

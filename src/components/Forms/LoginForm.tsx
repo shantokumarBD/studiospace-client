@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +20,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Loader2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { signIn } from "@/lib/auth-client";
@@ -30,7 +32,10 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,7 +66,7 @@ export function LoginForm({
 
       if (data) {
         toast.success("Welcome back to StudioSpace!");
-        router.push("/");
+        router.push(callbackUrl);
         router.refresh();
       }
     } finally {
@@ -70,9 +75,10 @@ export function LoginForm({
   };
 
   const handleGoogleLogin = async () => {
-    const data = await signIn.social({
-      provider: "google"
-    })
+    await signIn.social({
+      provider: "google",
+      callbackURL: callbackUrl,
+    });
   };
 
   return (
@@ -84,7 +90,7 @@ export function LoginForm({
       {...props}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
-        <div className="hidden lg:flex lg:col-span-5 relative rounded-3xl overflow-hidden border border-border-subtle bg-surface-1 shadow-2xl flex-col justify-between p-6 xl:p-8 self-stretch min-h-[520px] max-h-[85vh]">
+        <div className="hidden lg:flex lg:col-span-5 relative rounded-3xl overflow-hidden border border-border-subtle bg-surface-1 shadow-2xl flex-col justify-between p-6 xl:p-8 self-stretch min-h-[480px]">
           <img
             src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop"
             alt="Cinema Soundstage"
@@ -248,10 +254,22 @@ export function LoginForm({
                       <Input
                         id="password"
                         name="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="••••••••••••••"
-                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
+                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8 flex-1"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-text-muted hover:text-text-primary transition-colors ml-2 focus:outline-none cursor-pointer"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-3.5 h-3.5" />
+                        ) : (
+                          <Eye className="w-3.5 h-3.5" />
+                        )}
+                      </button>
                     </div>
                   </Field>
 

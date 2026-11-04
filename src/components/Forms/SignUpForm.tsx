@@ -18,10 +18,14 @@ import {
   User,
   Mail,
   Camera,
+  UploadCloud,
   Lock,
   ArrowRight,
   CheckCircle2,
   Loader2,
+  Eye,
+  EyeOff,
+  X,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { signIn, signUp } from "@/lib/auth-client";
@@ -33,6 +37,49 @@ export function SignUpForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image size exceeds 10MB limit");
+      return;
+    }
+    setIsUploadingImage(true);
+    try {
+      const apiKey =
+        process.env.NEXT_PUBLIC_IMGBB_API_KEY ||
+        "f678e604d546047549ca4cc2f2a651b0";
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success && data.data?.url) {
+        const url = data.data.display_url || data.data.url;
+        setAvatarUrl(url);
+        toast.success("Profile photo uploaded to ImgBB!");
+      } else {
+        toast.error(data.error?.message || "Failed to upload image");
+      }
+    } catch {
+      toast.error("Upload failed. Please check your connection.");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const hasMinLength = password.length >= 6;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +87,8 @@ export function SignUpForm({
     const formData = new FormData(e.currentTarget);
     const fullName = formData.get("fullName") as string;
     const email = formData.get("email") as string;
-    const image = (formData.get("image") || formData.get("imageUrl")) as string;
+    const rawImage = (formData.get("image") as string) || "";
+    const image = rawImage.trim();
     const password = formData.get("password") as string;
 
     const validation = signUpSchema.safeParse({
@@ -62,7 +110,7 @@ export function SignUpForm({
         name: validation.data.fullName,
         email: validation.data.email,
         password: validation.data.password,
-        image: validation.data.image || undefined,
+        image: validation.data.image && validation.data.image.trim() !== "" ? validation.data.image.trim() : undefined,
       });
 
       if (error) {
@@ -98,7 +146,7 @@ export function SignUpForm({
       {...props}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center w-full">
-        <div className="hidden lg:flex lg:col-span-5 relative rounded-3xl overflow-hidden border border-border-subtle bg-surface-1 shadow-2xl flex-col justify-between p-6 xl:p-8 self-stretch min-h-[580px] max-h-[88vh]">
+        <div className="hidden lg:flex lg:col-span-5 relative rounded-3xl overflow-hidden border border-border-subtle bg-surface-1 shadow-2xl flex-col justify-between p-6 xl:p-8 self-stretch min-h-[480px]">
           <img
             src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop"
             alt="Cinema Soundstage"
@@ -261,26 +309,66 @@ export function SignUpForm({
                   </Field>
 
                   <Field>
-                    <div className="flex items-center justify-between">
-                      <FieldLabel
-                        htmlFor="image"
-                        className="text-[10px] font-mono font-semibold text-text-secondary uppercase tracking-wider"
-                      >
-                        PROFILE PHOTO URL
-                      </FieldLabel>
-                      <span className="font-mono text-[9px] text-text-muted uppercase tracking-wider">
-                        OPTIONAL
-                      </span>
-                    </div>
-                    <div className="flex items-center bg-surface-2 border border-border-subtle rounded-xl px-3 py-0.5 focus-within:border-brand-orange transition-colors">
-                      <Camera className="w-3.5 h-3.5 text-text-muted mr-2.5 shrink-0" />
-                      <Input
-                        id="image"
-                        type="url"
-                        name="image"
-                        placeholder="https://images.unsplash.com/photo-producer"
-                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
-                      />
+                    <FieldLabel
+                      htmlFor="avatar-file-input"
+                      className="text-[10px] font-mono font-semibold text-text-secondary uppercase tracking-wider"
+                    >
+                      PROFILE PHOTO (OPTIONAL)
+                    </FieldLabel>
+                    <div className="flex items-center gap-3 bg-surface-2 border border-border-subtle rounded-xl p-2 focus-within:border-brand-orange transition-colors">
+                      <div className="relative w-10 h-10 rounded-full bg-surface-1 border border-border-subtle overflow-hidden shrink-0 flex items-center justify-center">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt="Avatar Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Camera className="w-4 h-4 text-text-muted" />
+                        )}
+                        {isUploadingImage && (
+                          <div className="absolute inset-0 bg-film-black/75 flex items-center justify-center">
+                            <Loader2 className="w-3.5 h-3.5 text-brand-orange animate-spin" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                        <label
+                          htmlFor="avatar-file-input"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-1 hover:bg-surface-3 border border-border-subtle text-xs font-mono font-semibold text-text-primary hover:text-brand-orange transition-colors cursor-pointer shadow-xs shrink-0"
+                        >
+                          <UploadCloud className="w-3.5 h-3.5 text-brand-orange" />
+                          <span>{avatarUrl ? "Change Photo" : "Choose File"}</span>
+                        </label>
+                        <input
+                          id="avatar-file-input"
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleAvatarUpload(file);
+                          }}
+                          disabled={isUploadingImage}
+                          className="hidden"
+                        />
+                        <input type="hidden" name="image" value={avatarUrl} />
+
+                        {avatarUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => setAvatarUrl("")}
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-rose-400 hover:text-rose-300 transition-colors px-1.5 py-0.5 rounded cursor-pointer"
+                          >
+                            <X className="w-3 h-3" />
+                            <span>Remove</span>
+                          </button>
+                        ) : (
+                          <span className="text-[10px] font-mono text-text-muted truncate">
+                            {isUploadingImage ? "Uploading to ImgBB..." : "PNG, JPG up to 10MB"}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </Field>
 
@@ -296,10 +384,63 @@ export function SignUpForm({
                       <Input
                         id="password"
                         name="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••••"
-                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8"
+                        className="bg-transparent border-0 text-text-primary text-xs focus-visible:ring-0 shadow-none px-0 h-8 flex-1"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-text-muted hover:text-text-primary transition-colors ml-2 focus:outline-none cursor-pointer"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-3.5 h-3.5" />
+                        ) : (
+                          <Eye className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5 pt-1.5 font-mono text-[10px]">
+                      <div
+                        className={`flex items-center gap-1 transition-colors ${
+                          hasMinLength ? "text-emerald-400 font-bold" : "text-text-muted"
+                        }`}
+                      >
+                        <CheckCircle2
+                          className={`w-3 h-3 ${
+                            hasMinLength ? "text-emerald-400" : "text-text-muted/40"
+                          }`}
+                        />
+                        <span>Min 6 chars</span>
+                      </div>
+                      <div
+                        className={`flex items-center gap-1 transition-colors ${
+                          hasUppercase ? "text-emerald-400 font-bold" : "text-text-muted"
+                        }`}
+                      >
+                        <CheckCircle2
+                          className={`w-3 h-3 ${
+                            hasUppercase ? "text-emerald-400" : "text-text-muted/40"
+                          }`}
+                        />
+                        <span>1 Uppercase</span>
+                      </div>
+                      <div
+                        className={`flex items-center gap-1 transition-colors ${
+                          hasLowercase ? "text-emerald-400 font-bold" : "text-text-muted"
+                        }`}
+                      >
+                        <CheckCircle2
+                          className={`w-3 h-3 ${
+                            hasLowercase ? "text-emerald-400" : "text-text-muted/40"
+                          }`}
+                        />
+                        <span>1 Lowercase</span>
+                      </div>
                     </div>
                   </Field>
 

@@ -140,6 +140,42 @@ export async function cancelBooking(id: string,token?: string) {
   return res.json();
 }
 
+export async function getHostBookings(email: string, token?: string): Promise<Booking[]> {
+  try {
+    const res = await fetch(
+      `${API_URL}/host-bookings?email=${encodeURIComponent(email)}`,
+      {
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const json = await res.json();
+    return json?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch host bookings:", error);
+    return [];
+  }
+}
+
+export async function updateBookingStatus(
+  id: string,
+  status: "Confirmed" | "Cancelled" | string,
+  token?: string
+) {
+  const res = await fetch(`${API_URL}/bookings/${id}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+  return res.json();
+}
+
 export async function addToWishlist(item: Partial<WishlistItem>, token?: string) {
   const res = await fetch(`${API_URL}/wishlist`, {
     method: "POST",

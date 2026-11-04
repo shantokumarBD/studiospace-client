@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { useSession } from "@/lib/auth-client";
+import ImageUploadField from "@/components/Shared/ImageUploadField";
 
 export const studioCategories = [
   "Photo Studios",
@@ -143,18 +144,14 @@ export default function StudioForm({
         />
       </div>
 
-      <div className="space-y-1.5 sm:col-span-2">
-        <Label htmlFor="image" className="text-xs text-text-secondary uppercase font-semibold">
-          Cover Image URL
-        </Label>
-        <Input
-          id="image"
+      <div className="sm:col-span-2">
+        <ImageUploadField
           name="image"
-          type="url"
+          label="Studio Cover Image"
           defaultValue={initialData?.image || ""}
-          placeholder="https://images.unsplash.com/photo-... (or paste ImgBB / PostImage URL)"
           required
-          className="bg-film-black border-border-subtle"
+          placeholder="https://images.unsplash.com/... or upload a stage photo"
+          helperText="Upload a high-resolution studio photo via ImgBB or paste an image link."
         />
       </div>
 

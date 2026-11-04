@@ -28,6 +28,7 @@ export default function StudioCard({ studio, isSaved, onToggleWishlist }: Studio
           </div>
 
           <button
+            type="button"
             onClick={() => onToggleWishlist && onToggleWishlist(studio._id)}
             aria-label="Add to wishlist"
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-text-secondary hover:text-brand-orange transition-colors cursor-pointer"

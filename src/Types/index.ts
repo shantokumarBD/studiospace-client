@@ -30,6 +30,7 @@ export interface Booking {
   hourlyRate: number;
   renterEmail: string;
   renterName: string;
+  ownerEmail?: string;
   date: string;
   hours: number;
   callTime: string;

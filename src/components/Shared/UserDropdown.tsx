@@ -22,6 +22,7 @@ import {
   LogOut,
   ChevronDown,
   Sparkles,
+  LayoutDashboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AuthButtonsProps } from "@/Types";
@@ -30,10 +31,6 @@ export function UserDropdown({
   user,
   onSignOut,
 }: AuthButtonsProps) {
-
-
- 
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -87,6 +84,15 @@ export function UserDropdown({
         </div>
 
         <DropdownMenuGroup className="flex flex-col gap-1">
+          <DropdownMenuItem
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-text-primary hover:bg-surface-2 focus:bg-surface-2 transition-all cursor-pointer"
+          >
+            <Link href="/dashboard" className="flex items-center gap-2.5 w-full">
+              <LayoutDashboard className="w-4 h-4 text-brand-orange" />
+              <span>Dashboard</span>
+            </Link>
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-brand-orange hover:bg-brand-orange/10 focus:bg-brand-orange/10 hover:text-brand-amber focus:text-brand-amber transition-all cursor-pointer group"
           >

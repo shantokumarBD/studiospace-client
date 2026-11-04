@@ -1,5 +1,37 @@
-import { Search, MapPin, SlidersHorizontal, ChevronDown, RotateCcw } from "lucide-react";
+import { Search, MapPin, SlidersHorizontal, RotateCcw, LayoutGrid, ArrowUpDown } from "lucide-react";
 import { StudioFilterProps } from "@/Types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const LOCATION_OPTIONS: { value: string; label: string }[] = [
+  { value: "all", label: "All Locations" },
+  { value: "Manhattan", label: "Manhattan, NY" },
+  { value: "Brooklyn", label: "Brooklyn, NY" },
+  { value: "Burbank", label: "Burbank, CA" },
+  { value: "Silver Lake", label: "Silver Lake, CA" },
+  { value: "Austin", label: "Austin, TX" },
+  { value: "Downtown", label: "Downtown LA, CA" },
+];
+
+const LOCATION_ITEMS_MAP: Record<string, string> = Object.fromEntries(
+  LOCATION_OPTIONS.map((loc) => [loc.value, loc.label])
+);
+
+const SORT_OPTIONS: { value: string; label: string }[] = [
+  { value: "default", label: "Default Sorting" },
+  { value: "rate-asc", label: "Price: Low to High" },
+  { value: "rate-desc", label: "Price: High to Low" },
+  { value: "rating", label: "Highest Rated" },
+];
+
+const SORT_ITEMS_MAP: Record<string, string> = Object.fromEntries(
+  SORT_OPTIONS.map((opt) => [opt.value, opt.label])
+);
 
 export default function StudioFilter({
   categories,
@@ -53,70 +85,101 @@ export default function StudioFilter({
         <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
           Category
         </label>
-        <div className="flex flex-col gap-1">
-          {categories.map((cat) => {
-            const isActive = filters.category.toLowerCase().trim() === cat.toLowerCase().trim();
-            return (
-              <button
+        <Select
+          value={filters.category}
+          onValueChange={(val) => onFilterChange("category", (val as string) || "All Categories")}
+        >
+          <SelectTrigger className="w-full bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5 h-auto text-xs text-text-primary focus-visible:border-brand-orange focus-visible:ring-0 cursor-pointer justify-between">
+            <div className="flex items-center gap-2 truncate">
+              <LayoutGrid className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <SelectValue placeholder="Select Category" />
+            </div>
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            side="bottom"
+            alignItemWithTrigger={false}
+            className="bg-[#121214] border border-[#27272a] text-text-primary rounded-xl p-1 shadow-2xl z-50 w-[var(--anchor-width)] max-h-60"
+          >
+            {categories.map((cat) => (
+              <SelectItem
                 key={cat}
-                onClick={() => onFilterChange("category", cat)}
-                className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-gradient-to-r from-brand-orange to-brand-amber text-white font-semibold shadow-md"
-                    : "text-text-secondary hover:bg-surface-2 hover:text-text-primary"
-                }`}
+                value={cat}
+                className="text-xs text-text-secondary hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white rounded-lg py-2 px-2.5 cursor-pointer transition-colors"
               >
                 {cat}
-              </button>
-            );
-          })}
-        </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
           Location
         </label>
-        <div className="relative">
-          <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
-            <MapPin className="w-3.5 h-3.5 text-text-muted mr-2 shrink-0" />
-            <select
-              value={filters.city}
-              onChange={(e) => onFilterChange("city", e.target.value)}
-              className="w-full bg-transparent text-text-primary text-xs appearance-none focus:outline-none cursor-pointer"
-            >
-              <option value="all" className="bg-surface-1 text-text-primary">All Locations</option>
-              <option value="Manhattan" className="bg-surface-1 text-text-primary">Manhattan, NY</option>
-              <option value="Brooklyn" className="bg-surface-1 text-text-primary">Brooklyn, NY</option>
-              <option value="Burbank" className="bg-surface-1 text-text-primary">Burbank, CA</option>
-              <option value="Silver Lake" className="bg-surface-1 text-text-primary">Silver Lake, CA</option>
-              <option value="Austin" className="bg-surface-1 text-text-primary">Austin, TX</option>
-              <option value="Downtown" className="bg-surface-1 text-text-primary">Downtown LA, CA</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-text-muted ml-auto pointer-events-none shrink-0" />
-          </div>
-        </div>
+        <Select
+          value={filters.city}
+          items={LOCATION_ITEMS_MAP}
+          onValueChange={(val) => onFilterChange("city", (val as string) || "all")}
+        >
+          <SelectTrigger className="w-full bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5 h-auto text-xs text-text-primary focus-visible:border-brand-orange focus-visible:ring-0 cursor-pointer justify-between">
+            <div className="flex items-center gap-2 truncate">
+              <MapPin className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <SelectValue placeholder="Select Location" />
+            </div>
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            side="bottom"
+            alignItemWithTrigger={false}
+            className="bg-[#121214] border border-[#27272a] text-text-primary rounded-xl p-1 shadow-2xl z-50 w-[var(--anchor-width)] max-h-60"
+          >
+            {LOCATION_OPTIONS.map((loc) => (
+              <SelectItem
+                key={loc.value}
+                value={loc.value}
+                className="text-xs text-text-secondary hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white rounded-lg py-2 px-2.5 cursor-pointer transition-colors"
+              >
+                {loc.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
           Sort By
         </label>
-        <div className="relative">
-          <div className="flex items-center bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5">
-            <select
-              value={filters.sort}
-              onChange={(e) => onFilterChange("sort", e.target.value)}
-              className="w-full bg-transparent text-text-primary text-xs appearance-none focus:outline-none cursor-pointer"
-            >
-              <option value="default" className="bg-surface-1 text-text-primary">Default Sorting</option>
-              <option value="rate-asc" className="bg-surface-1 text-text-primary">Price: Low to High</option>
-              <option value="rate-desc" className="bg-surface-1 text-text-primary">Price: High to Low</option>
-              <option value="rating" className="bg-surface-1 text-text-primary">Highest Rated</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-text-muted ml-auto pointer-events-none shrink-0" />
-          </div>
-        </div>
+        <Select
+          value={filters.sort}
+          items={SORT_ITEMS_MAP}
+          onValueChange={(val) => onFilterChange("sort", (val as string) || "default")}
+        >
+          <SelectTrigger className="w-full bg-film-black border border-border-subtle rounded-xl px-3.5 py-2.5 h-auto text-xs text-text-primary focus-visible:border-brand-orange focus-visible:ring-0 cursor-pointer justify-between">
+            <div className="flex items-center gap-2 truncate">
+              <ArrowUpDown className="w-3.5 h-3.5 text-text-muted shrink-0" />
+              <SelectValue placeholder="Sort By" />
+            </div>
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            side="bottom"
+            alignItemWithTrigger={false}
+            className="bg-[#121214] border border-[#27272a] text-text-primary rounded-xl p-1 shadow-2xl z-50 w-[var(--anchor-width)]"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <SelectItem
+                key={opt.value}
+                value={opt.value}
+                className="text-xs text-text-secondary hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white rounded-lg py-2 px-2.5 cursor-pointer transition-colors"
+              >
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </aside>
   );

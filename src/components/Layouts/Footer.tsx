@@ -32,7 +32,7 @@ const LinkedInIcon = () => (
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-surface-1 border-t border-border-subtle relative mt-auto transition-colors duration-200">
+    <footer className="w-full bg-surface-1 border-t border-border-subtle relative mt-auto transition-colors duration-200 print:hidden">
       {/* Top Gradient Accent Line */}
       <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand-orange to-transparent" />
 

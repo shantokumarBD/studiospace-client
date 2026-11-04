@@ -7,7 +7,7 @@ import ThemeToggle from "../Shared/ThemeToggle";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 inset-x-0 z-50 bg-surface-1/85 backdrop-blur-xl border-b border-border-subtle">
+    <header className="sticky top-0 inset-x-0 z-50 bg-surface-1/85 backdrop-blur-xl border-b border-border-subtle print:hidden">
       <div className="h-20 max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-between">
         <Logo />
 

@@ -15,6 +15,8 @@ import toast from "react-hot-toast";
 import { WishlistItem } from "@/Types";
 import { removeFromWishlist } from "@/lib/api";
 import { GetTokenFormClient } from "@/lib/gettokenformClient";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface WishlistClientProps {
   user: {
@@ -105,15 +107,17 @@ export default function WishlistClient({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-film-black/90 via-transparent to-film-black/30" />
 
-                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 font-mono text-[10px] font-semibold text-brand-orange uppercase">
+                  <Badge variant="outline" className="absolute top-3 left-3 px-3 py-1 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 font-mono text-[10px] font-semibold text-brand-orange uppercase h-auto">
                     {item.category}
-                  </span>
+                  </Badge>
 
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     disabled={removingId === item._id}
                     onClick={() => handleRemove(item._id, item.title)}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-rose-400 hover:text-rose-300 transition-colors cursor-pointer disabled:opacity-50"
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-rose-400 hover:text-rose-300 transition-colors cursor-pointer disabled:opacity-50 p-0 h-8"
                     title="Remove from wishlist"
                   >
                     {removingId === item._id ? (
@@ -121,7 +125,7 @@ export default function WishlistClient({
                     ) : (
                       <Trash2 className="w-4 h-4" />
                     )}
-                  </button>
+                  </Button>
 
                   <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-film-black/85 backdrop-blur-md border border-white/10">
                     <Star className="w-3.5 h-3.5 fill-brand-amber text-brand-amber" />

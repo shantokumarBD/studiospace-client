@@ -13,17 +13,23 @@ import {
   Clapperboard,
   Loader2,
   CheckCircle2,
-  X,
   AlertTriangle,
   Search,
   CalendarCheck2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Studio } from "@/Types";
-import { deleteStudio, updateStudio } from "@/lib/api";
-import { studioSchema } from "@/schemas/studio.schema";
-import StudioForm from "@/components/Forms/StudioForm";
+import { deleteStudio } from "@/lib/api";
 import { GetTokenFormClient } from "@/lib/gettokenformClient";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 interface MyListingsClientProps {
   user: {
@@ -39,17 +45,8 @@ export default function MyListingsClient({
 }: MyListingsClientProps) {
   const router = useRouter();
   const [studios, setStudios] = useState<Studio[]>(initialStudios);
-  const [prevInitialStudios, setPrevInitialStudios] = useState(initialStudios);
-
-  if (prevInitialStudios !== initialStudios) {
-    setPrevInitialStudios(initialStudios);
-    setStudios(initialStudios);
-  }
-
   const [deletingStudio, setDeletingStudio] = useState<Studio | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [editingStudio, setEditingStudio] = useState<Studio | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredStudios = studios.filter((s) => {
@@ -97,50 +94,6 @@ export default function MyListingsClient({
     }
   };
 
-  const handleUpdateStudio = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!editingStudio) return;
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const rawData = Object.fromEntries(formData);
-
-    const validation = studioSchema.safeParse(rawData);
-    if (!validation.success) {
-      toast.error(validation.error.issues[0]?.message || "Validation failed");
-      return;
-    }
-
-    setIsUpdating(true);
-    try {
-      const payload = {
-        ...validation.data,
-        features: validation.data.features
-          .split(",")
-          .map((f) => f.trim())
-          .filter(Boolean),
-      };
-      const token = await GetTokenFormClient();
-      const result = await updateStudio(editingStudio._id, payload,token);
-      if (result.success) {
-        setStudios((prev) =>
-          prev.map((s) =>
-            s._id === editingStudio._id ? { ...s, ...payload } : s
-          )
-        );
-        toast.success("Studio listing updated successfully");
-        setEditingStudio(null);
-        router.refresh();
-      } else {
-        toast.error(result.message || "Failed to update studio");
-      }
-    } catch {
-      toast.error("An error occurred while updating the studio");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-6">
@@ -153,13 +106,23 @@ export default function MyListingsClient({
           </p>
         </div>
 
-        <Link
-          href="/add-studio"
-          className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/20 cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Studio</span>
-        </Link>
+        <div className="flex items-center gap-3 self-start sm:self-auto flex-wrap">
+          <Link
+            href="/dashboard#incoming-requests"
+            className="px-4 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border-subtle text-text-primary font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <CalendarCheck2 className="w-4 h-4 text-brand-orange" />
+            <span>Incoming Booking Requests</span>
+          </Link>
+
+          <Link
+            href="/add-studio"
+            className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/20 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Studio</span>
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -201,12 +164,12 @@ export default function MyListingsClient({
       <div className="mb-6 flex items-center justify-between gap-4">
         <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter studios by title, category, or location..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-1 border border-border-subtle text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-orange transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-1 border border-border-subtle text-xs text-text-primary placeholder:text-text-muted focus-visible:border-brand-orange focus-visible:ring-0 transition-colors h-auto"
           />
         </div>
         <span className="hidden sm:block text-xs font-mono text-text-muted">
@@ -268,9 +231,9 @@ export default function MyListingsClient({
                 <div className="flex flex-col gap-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                    <Badge variant="outline" className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider border-0 p-0 h-auto">
                       ACTIVE ON CATALOG
-                    </span>
+                    </Badge>
                   </div>
                   <h3 className="font-bold text-sm sm:text-base text-text-primary truncate">
                     {studio.title}
@@ -315,14 +278,16 @@ export default function MyListingsClient({
                   <span>Edit</span>
                 </Link>
 
-                <button
+                <Button
                   type="button"
+                  variant="destructive"
+                  size="sm"
                   onClick={() => setDeletingStudio(studio)}
-                  className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 hover:text-rose-300 text-xs font-mono font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 hover:text-rose-300 text-xs font-mono font-semibold transition-colors flex items-center gap-1.5 cursor-pointer h-auto"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete</span>
-                </button>
+                </Button>
               </div>
             </article>
           ))}
@@ -330,19 +295,24 @@ export default function MyListingsClient({
       )}
 
       {deletingStudio && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-film-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-md rounded-3xl bg-surface-1 border border-border-subtle p-6 shadow-2xl flex flex-col gap-4">
+        <AlertDialog
+          open={!!deletingStudio}
+          onOpenChange={(open) => {
+            if (!open) setDeletingStudio(null);
+          }}
+        >
+          <AlertDialogContent className="relative w-full max-w-md rounded-3xl bg-surface-1 border border-border-subtle p-6 shadow-2xl flex flex-col gap-4 text-text-primary sm:max-w-md">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-text-primary">
+                <AlertDialogTitle className="text-base font-bold text-text-primary">
                   Delete Studio Listing?
-                </h3>
-                <p className="text-xs text-text-secondary mt-0.5">
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs text-text-secondary mt-0.5">
                   This action cannot be undone.
-                </p>
+                </AlertDialogDescription>
               </div>
             </div>
 
@@ -356,19 +326,21 @@ export default function MyListingsClient({
             </p>
 
             <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 disabled={isDeleting}
                 onClick={() => setDeletingStudio(null)}
-                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer text-center"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-mono font-semibold transition-colors cursor-pointer text-center h-auto border-border-subtle"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="destructive"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 h-auto"
               >
                 {isDeleting ? (
                   <>
@@ -381,44 +353,10 @@ export default function MyListingsClient({
                     <span>Confirm Delete</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {editingStudio && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-film-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-2xl max-h-[90vh] rounded-3xl bg-surface-1 border border-border-subtle shadow-2xl flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between p-5 sm:p-6 pb-4 border-b border-border-subtle shrink-0">
-              <div>
-                <h3 className="text-lg font-bold text-text-primary">
-                  Edit Studio Listing
-                </h3>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Update stage specifications, pricing, and amenities
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEditingStudio(null)}
-                className="p-1.5 rounded-lg text-text-muted hover:text-text-primary transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6">
-              <StudioForm
-                initialData={editingStudio}
-                onSubmit={handleUpdateStudio}
-                loading={isUpdating}
-                submitText="Save Changes"
-                onCancel={() => setEditingStudio(null)}
-              />
-            </div>
-          </div>
-        </div>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

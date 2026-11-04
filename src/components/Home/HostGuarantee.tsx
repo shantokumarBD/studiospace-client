@@ -1,5 +1,7 @@
-import { ShieldCheck, BadgeCheck, Lock, Headphones, CheckCircle2, ArrowRight, Clock } from "lucide-react";
+import { ShieldCheck, BadgeCheck, Lock, Headphones, CheckCircle2, ArrowRight, Clock, Shield, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function HostGuarantee() {
   return (
@@ -13,11 +15,12 @@ export default function HostGuarantee() {
             SECURITY
           </span>
 
-          <span className="relative z-10 font-mono text-xs sm:text-sm font-semibold tracking-[0.2em] text-brand-orange uppercase">
-            ———— // PLATFORM ASSURANCES ————
-          </span>
+          <div className="relative z-10 inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange font-mono text-xs font-semibold uppercase tracking-wider mb-3">
+            <Shield className="w-3.5 h-3.5" />
+            <span>PLATFORM ASSURANCES</span>
+          </div>
 
-          <h2 className="relative z-10 font-extrabold tracking-tight text-text-primary text-3xl sm:text-4xl lg:text-5xl mt-3 leading-tight">
+          <h2 className="relative z-10 font-extrabold tracking-tight text-text-primary text-3xl sm:text-4xl lg:text-5xl mt-1 leading-tight">
             Host Guarantee &{" "}
             <span className="italic font-serif font-light text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-[#F17332] to-brand-amber">
               Creator Support
@@ -29,163 +32,191 @@ export default function HostGuarantee() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
-          <div className="lg:col-span-7 rounded-2xl bg-surface-1 border border-border-subtle p-6 sm:p-7 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl relative overflow-hidden group">
-            <div className="absolute -right-8 -bottom-8 w-48 h-48 bg-brand-orange/10 rounded-full blur-2xl pointer-events-none group-hover:bg-brand-orange/15 transition-all" />
+          <div className="lg:col-span-7 rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-8 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl relative overflow-hidden group">
+            <div className="absolute -right-8 -bottom-8 w-56 h-56 bg-brand-orange/10 rounded-full blur-3xl pointer-events-none group-hover:bg-brand-orange/15 transition-all" />
 
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-orange shadow-md">
-                  <ShieldCheck className="w-5 h-5" />
+              <div className="flex items-center justify-between mb-5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-orange/15 to-brand-amber/10 border border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner">
+                  <ShieldCheck className="w-6 h-6" />
                 </div>
-                <span className="font-mono text-[10px] font-bold text-emerald-400 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 uppercase tracking-wider">
-                  TIER-1 UNDERWRITTEN
-                </span>
+                <Badge variant="outline" className="flex items-center gap-1.5 font-mono text-[10px] font-bold text-emerald-400 px-3 py-1 rounded-full bg-emerald-500/10 border-emerald-500/20 uppercase tracking-wider h-auto">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>TIER-1 UNDERWRITTEN</span>
+                </Badge>
               </div>
 
-              <div className="mb-4">
-                <span className="font-mono text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-brand-amber tracking-tight">
-                  $1,000,000
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-text-primary mt-1">
-                  Liability & Property Damage Protection
+              <div className="mb-6">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-brand-amber tracking-tight">
+                    $1,000,000
+                  </span>
+                  <span className="font-mono text-xs font-semibold text-text-muted uppercase">
+                    Coverage Cap
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-text-primary mt-2">
+                  Comprehensive Stage & Property Protection
                 </h3>
-                <p className="text-text-secondary text-xs sm:text-sm mt-1 leading-relaxed">
-                  Every confirmed reservation automatically includes commercial property damage coverage and third-party liability with zero host deductible.
+                <p className="text-text-secondary text-xs sm:text-sm mt-1.5 leading-relaxed">
+                  Every confirmed reservation automatically includes commercial property damage coverage, equipment protection, and third-party liability with zero host deductible.
                 </p>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-border-subtle/60 grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="text-[11px] text-text-secondary font-medium">Facility Damage</span>
+            <div className="pt-4 border-t border-border-subtle grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-surface-2/60 border border-border-subtle/50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs text-text-primary font-medium">Facility Damage</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="text-[11px] text-text-secondary font-medium">Zero Deductible</span>
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-surface-2/60 border border-border-subtle/50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs text-text-primary font-medium">Zero Deductible</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="text-[11px] text-text-secondary font-medium">Injury Protection</span>
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-surface-2/60 border border-border-subtle/50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs text-text-primary font-medium">Injury Safeguards</span>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-5 rounded-2xl bg-surface-1 border border-border-subtle p-6 sm:p-7 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
+          <div className="lg:col-span-5 rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-8 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-amber shadow-md">
-                  <BadgeCheck className="w-5 h-5" />
+              <div className="flex items-center justify-between mb-5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-amber/15 to-brand-orange/10 border border-brand-amber/30 flex items-center justify-center text-brand-amber shadow-inner">
+                  <BadgeCheck className="w-6 h-6" />
                 </div>
-                <span className="font-mono text-[10px] font-bold text-text-muted px-2.5 py-0.5 rounded-full bg-surface-2 border border-border-subtle uppercase tracking-wider">
-                  KYC VERIFIED
-                </span>
+                <Badge variant="outline" className="flex items-center gap-1.5 font-mono text-[10px] font-bold text-brand-amber px-3 py-1 rounded-full bg-brand-amber/10 border-brand-amber/20 uppercase tracking-wider h-auto">
+                  <Sparkles className="w-3 h-3" />
+                  <span>KYC VERIFIED</span>
+                </Badge>
               </div>
 
-              <h3 className="text-base sm:text-lg font-bold text-text-primary mb-1">
+              <h3 className="text-lg sm:text-xl font-bold text-text-primary mb-2">
                 100% Verified Production Profiles
               </h3>
 
-              <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mb-4">
-                No anonymous bookings. Directors, photographers, and sound engineers undergo biometric ID verification and portfolio auditing before booking.
+              <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mb-6">
+                No anonymous bookings. Directors, photographers, and audio engineers undergo biometric government ID verification and portfolio auditing before stepping onto any stage.
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-surface-2/60 border border-border-subtle/80 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-1.5 overflow-hidden">
-                  <div className="inline-block h-6 w-6 rounded-full ring-2 ring-film-black bg-brand-orange/20 text-brand-orange font-mono text-[9px] font-bold flex items-center justify-center">
-                    DP
-                  </div>
-                  <div className="inline-block h-6 w-6 rounded-full ring-2 ring-film-black bg-brand-amber/20 text-brand-amber font-mono text-[9px] font-bold flex items-center justify-center">
-                    PH
-                  </div>
-                  <div className="inline-block h-6 w-6 rounded-full ring-2 ring-film-black bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold flex items-center justify-center">
-                    AE
-                  </div>
+            <div className="p-3.5 rounded-2xl bg-surface-2 border border-border-subtle flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex -space-x-2 overflow-hidden">
+                  <Avatar size="sm" className="size-8 ring-2 ring-surface-1 border-0">
+                    <AvatarImage
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                      alt="Producer"
+                    />
+                    <AvatarFallback className="text-[10px]">PR</AvatarFallback>
+                  </Avatar>
+                  <Avatar size="sm" className="size-8 ring-2 ring-surface-1 border-0">
+                    <AvatarImage
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+                      alt="Director"
+                    />
+                    <AvatarFallback className="text-[10px]">DR</AvatarFallback>
+                  </Avatar>
+                  <Avatar size="sm" className="size-8 ring-2 ring-surface-1 border-0">
+                    <AvatarImage
+                      src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80"
+                      alt="Cinematographer"
+                    />
+                    <AvatarFallback className="text-[10px]">DP</AvatarFallback>
+                  </Avatar>
                 </div>
-                <span className="text-xs font-mono text-text-primary font-bold">
-                  4,200+ Verified
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-mono font-bold text-text-primary">
+                    4,200+ Verified
+                  </span>
+                  <span className="text-[10px] font-mono text-text-muted">
+                    Vetted Creators
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono text-emerald-400 font-semibold uppercase">
-                ID APPROVED
-              </span>
+              <Badge variant="outline" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold uppercase tracking-wider shrink-0 h-auto">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>ID APPROVED</span>
+              </Badge>
             </div>
           </div>
 
-          <div className="lg:col-span-6 rounded-2xl bg-surface-1 border border-border-subtle p-6 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
+          <div className="lg:col-span-6 rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-7 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-orange shadow-sm">
-                  <Lock className="w-4 h-4" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-orange shadow-sm">
+                  <Lock className="w-5 h-5" />
                 </div>
-                <span className="font-mono text-[10px] font-bold text-brand-orange px-2.5 py-0.5 rounded-full bg-brand-orange/10 border border-brand-orange/20 uppercase tracking-wider">
+                <Badge variant="outline" className="font-mono text-[10px] font-bold text-brand-orange px-3 py-1 rounded-full bg-brand-orange/10 border-brand-orange/20 uppercase tracking-wider h-auto">
                   STRIPE ESCROW
-                </span>
+                </Badge>
               </div>
 
-              <h3 className="text-base font-bold text-text-primary mb-1">
+              <h3 className="text-base sm:text-lg font-bold text-text-primary mb-1.5">
                 Equipment Safety & Deposit Escrow
               </h3>
 
               <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
-                Security deposits are locked in an encrypted vault and automatically refunded upon zero-damage wrap.
+                Security deposits are locked in an encrypted vault and automatically refunded within 24 hours of a verified zero-damage wrap.
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-border-subtle/50 flex items-center justify-between text-xs font-mono">
-              <span className="text-text-muted">Settlement</span>
-              <span className="text-emerald-400 font-bold">Automated & Safe</span>
+            <div className="pt-4 mt-4 border-t border-border-subtle flex items-center justify-between text-xs font-mono">
+              <span className="text-text-muted">Settlement Protocol</span>
+              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Automated & Encrypted</span>
+              </span>
             </div>
           </div>
 
-          <div className="lg:col-span-6 rounded-2xl bg-surface-1 border border-border-subtle p-6 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
+          <div className="lg:col-span-6 rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-7 flex flex-col justify-between hover:border-brand-orange/40 transition-all duration-300 shadow-xl group">
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-amber shadow-sm">
-                  <Headphones className="w-4 h-4" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-surface-2 border border-border-subtle flex items-center justify-center text-brand-amber shadow-sm">
+                  <Headphones className="w-5 h-5" />
                 </div>
-                <span className="font-mono text-[10px] font-bold text-emerald-400 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 uppercase tracking-wider">
-                  24/7 DISPATCH
+                <span className="font-mono text-[10px] font-bold text-emerald-400 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 uppercase tracking-wider">
+                  24/7 ON-CALL
                 </span>
               </div>
 
-              <h3 className="text-base font-bold text-text-primary mb-1">
-                24/7 Live Concierge & Host Support
+              <h3 className="text-base sm:text-lg font-bold text-text-primary mb-1.5">
+                24/7 Live Concierge & Dispatch Support
               </h3>
 
               <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
-                Dedicated on-call production specialists to resolve load-in delays, overtime, and technical emergencies.
+                Dedicated on-call production specialists to resolve load-in delays, emergency hold extensions, and technical stage questions.
               </p>
             </div>
 
-            <div className="pt-3 mt-3 border-t border-border-subtle/50 flex items-center justify-between text-xs font-mono">
+            <div className="pt-4 mt-4 border-t border-border-subtle flex items-center justify-between text-xs font-mono">
               <div className="flex items-center gap-1.5 text-text-muted">
                 <Clock className="w-3.5 h-3.5 text-brand-amber" />
                 <span>Response SLA</span>
               </div>
-              <span className="text-brand-amber font-bold">&lt; 3 Minutes</span>
+              <span className="text-brand-amber font-bold">&lt; 3 Minutes Response</span>
             </div>
           </div>
 
         </div>
 
-        <div className="mt-8 rounded-2xl bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1 border border-border-subtle p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div className="mt-8 rounded-3xl bg-gradient-to-r from-surface-1 via-surface-2 to-surface-1 border border-border-subtle p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
           <div className="max-w-xl text-center sm:text-left">
-            <h4 className="text-base sm:text-lg font-bold text-text-primary">
+            <h4 className="text-lg sm:text-xl font-extrabold text-text-primary tracking-tight">
               Have an idle studio? Monetize safely with $1M coverage.
             </h4>
-            <p className="text-text-secondary text-xs mt-0.5">
-              Join 400+ protected stages and daylight lofts earning passive income on StudioSpace.
+            <p className="text-text-secondary text-xs sm:text-sm mt-1">
+              Join 400+ protected stages, soundproof suites, and daylight lofts earning passive income on StudioSpace.
             </p>
           </div>
 
           <Link
             href="/add-studio"
-            className="shrink-0 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-md hover:opacity-90 transition-opacity cursor-pointer"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-lg shadow-brand-orange/20 hover:opacity-90 transition-all cursor-pointer"
           >
             <span>List Your Space</span>
             <ArrowRight className="w-4 h-4" />

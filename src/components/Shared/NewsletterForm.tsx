@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -15,20 +17,20 @@ export default function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2 mt-2">
-      <input
+      <Input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="director@creativestudio.io"
         required
-        className="w-full bg-surface-2 border border-border-subtle rounded-xl px-3.5 py-2 text-xs font-mono text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-orange transition-colors"
+        className="w-full bg-surface-2 border border-border-subtle rounded-xl px-3.5 py-2 text-xs font-mono text-text-primary placeholder:text-text-muted focus-visible:border-brand-orange focus-visible:ring-0 transition-colors h-auto"
       />
-      <button
+      <Button
         type="submit"
-        className="bg-gradient-to-r from-brand-orange to-brand-amber text-white font-bold text-xs px-4 py-2 rounded-xl hover:opacity-90 shrink-0 transition-opacity cursor-pointer"
+        className="bg-gradient-to-r from-brand-orange to-brand-amber text-white font-bold text-xs px-4 py-2 rounded-xl hover:opacity-90 shrink-0 transition-opacity cursor-pointer h-auto border-0"
       >
         JOIN
-      </button>
+      </Button>
     </form>
   );
 }

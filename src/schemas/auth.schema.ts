@@ -24,7 +24,10 @@ export const signUpSchema = z.object({
     .string()
     .url("Please provide a valid image URL")
     .optional()
-    .or(z.literal("")),
+    .nullable()
+    .or(z.literal(""))
+    .or(z.null())
+    .or(z.undefined()),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
