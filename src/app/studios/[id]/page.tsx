@@ -23,22 +23,17 @@ export async function generateMetadata({ params }: PageProps) {
 
 async function StudioContent({ params }: PageProps) {
   const { id } = await params;
-  let session = null;
-  try {
-    session = await auth.api.getSession({
-      headers: await headers(),
-    });
-  } catch {
-    session = null;
-  }
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   let userWishlist: any[] = [];
   if (session?.user?.email) {
     try {
       const token = await getAuthTokenServer();
       userWishlist = await getMyWishlist(session.user.email, token);
-    } catch {
-      userWishlist = [];
+    } catch (error) {
+      console.error("Failed to load wishlist:", error);
     }
   }
 

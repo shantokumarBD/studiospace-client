@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getMyBookings } from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
+import { Booking } from "@/Types";
 import MyBookingsClient from "@/components/Bookings/MyBookingsClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
@@ -21,8 +22,13 @@ async function MyBookingsContent() {
     redirect("/log-in");
   }
 
-  const token = await getAuthTokenServer();
-  const initialBookings = await getMyBookings(session.user.email || "", token);
+  let initialBookings: Booking[] = [];
+  try {
+    const token = await getAuthTokenServer();
+    initialBookings = await getMyBookings(session.user.email || "", token);
+  } catch (error) {
+    console.error("Failed to load bookings:", error);
+  }
 
   return (
     <MyBookingsClient

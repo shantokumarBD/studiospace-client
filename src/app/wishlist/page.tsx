@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getMyWishlist } from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
+import { WishlistItem } from "@/Types";
 import WishlistClient from "@/components/Wishlist/WishlistClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
@@ -21,8 +22,13 @@ async function WishlistContent() {
     redirect("/log-in");
   }
 
-  const token = await getAuthTokenServer();
-  const initialWishlist = await getMyWishlist(session.user.email || "", token);
+  let initialWishlist: WishlistItem[] = [];
+  try {
+    const token = await getAuthTokenServer();
+    initialWishlist = await getMyWishlist(session.user.email || "", token);
+  } catch (error) {
+    console.error("Failed to load wishlist:", error);
+  }
 
   return (
     <WishlistClient

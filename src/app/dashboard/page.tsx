@@ -26,25 +26,52 @@ export const metadata = {
 };
 
 async function DashboardContent() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch {
+    session = null;
+  }
 
   if (!session?.user) {
     redirect("/log-in");
   }
 
-  const token = await getAuthTokenServer();
+  let token: string | undefined;
+  try {
+    token = await getAuthTokenServer();
+  } catch {
+    token = undefined;
+  }
   const email = session.user.email || "";
 
-  const [studios, bookings, wishlist, hostRequests] = await Promise.all([
-    getMyStudios(email, token),
-    getMyBookings(email, token),
-    getMyWishlist(email, token),
-    getHostBookings(email, token),
-  ]);
+  let studios: any[] = [];
+  let bookings: any[] = [];
+  let wishlist: any[] = [];
+  let hostRequests: any[] = [];
 
-  const pendingHostRequests = hostRequests.filter((b) =>
+  try {
+    const results = await Promise.allSettled([
+      getMyStudios(email, token),
+      getMyBookings(email, token),
+      getMyWishlist(email, token),
+      getHostBookings(email, token),
+    ]);
+
+    studios = results[0].status === "fulfilled" ? results[0].value : [];
+    bookings = results[1].status === "fulfilled" ? results[1].value : [];
+    wishlist = results[2].status === "fulfilled" ? results[2].value : [];
+    hostRequests = results[3].status === "fulfilled" ? results[3].value : [];
+  } catch {
+    studios = [];
+    bookings = [];
+    wishlist = [];
+    hostRequests = [];
+  }
+
+  const pendingHostRequests = (hostRequests || []).filter((b) =>
     (b.status || "").toLowerCase().includes("pending")
   ).length;
 

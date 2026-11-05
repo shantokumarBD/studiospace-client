@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getMyStudios } from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
+import { Studio } from "@/Types";
 import MyListingsClient from "@/components/Studios/MyListingsClient";
 import ModernLoader from "@/components/Shared/ModernLoader";
 
@@ -21,8 +22,13 @@ async function MyListingsContent() {
     redirect("/log-in");
   }
 
-  const token = await getAuthTokenServer();
-  const initialStudios = await getMyStudios(session.user.email || "", token);
+  let initialStudios: Studio[] = [];
+  try {
+    const token = await getAuthTokenServer();
+    initialStudios = await getMyStudios(session.user.email || "", token);
+  } catch (error) {
+    console.error("Failed to load studios:", error);
+  }
 
   return (
     <MyListingsClient
