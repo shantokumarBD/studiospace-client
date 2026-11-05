@@ -1,4 +1,4 @@
-import { ShieldCheck, BadgeCheck, Lock, Headphones, CheckCircle2, ArrowRight, Clock, Shield, Sparkles } from "lucide-react";
+import { ShieldCheck, BadgeCheck, Lock, Headphones, CheckCircle2, ArrowRight, Clock, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,12 +15,11 @@ export default function HostGuarantee() {
             SECURITY
           </span>
 
-          <div className="relative z-10 inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange font-mono text-xs font-semibold uppercase tracking-wider mb-3">
-            <Shield className="w-3.5 h-3.5" />
-            <span>PLATFORM ASSURANCES</span>
-          </div>
+          <span className="relative z-10 font-mono text-xs sm:text-sm font-semibold tracking-[0.2em] text-brand-orange uppercase">
+            ———— // PLATFORM ASSURANCES ————
+          </span>
 
-          <h2 className="relative z-10 font-extrabold tracking-tight text-text-primary text-3xl sm:text-4xl lg:text-5xl mt-1 leading-tight">
+          <h2 className="relative z-10 font-extrabold tracking-tight text-text-primary text-3xl sm:text-4xl lg:text-5xl mt-3 leading-tight">
             Host Guarantee &{" "}
             <span className="italic font-serif font-light text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-[#F17332] to-brand-amber">
               Creator Support
