@@ -4,9 +4,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   Compass,
-  AlertTriangle,
-  EyeOff,
-  Radio,
   Search,
   Calendar,
   Headphones,
@@ -92,51 +89,25 @@ export default function NotFound() {
           Scene Not Found. <span className="text-brand-orange">Cut to Wrap.</span>
         </h2>
 
-        <p className="text-text-secondary text-xs sm:text-sm max-w-lg mx-auto leading-relaxed mb-5">
+        <p className="text-text-secondary text-xs sm:text-sm max-w-lg mx-auto leading-relaxed mb-6">
           The production soundstage, reservation link, or call sheet you&apos;re seeking was struck from the master schedule or never made it out of pre-production.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full max-w-xl mb-6">
-          <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-1 border border-border-subtle font-mono text-left">
-            <AlertTriangle className="w-3.5 h-3.5 text-brand-orange shrink-0" />
-            <div>
-              <span className="text-[9px] text-text-muted block">LOOKUP STATUS</span>
-              <span className="font-semibold text-text-primary text-[10.5px]">STAGE_ID UNRESOLVED</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-1 border border-border-subtle font-mono text-left">
-            <EyeOff className="w-3.5 h-3.5 text-brand-amber shrink-0" />
-            <div>
-              <span className="text-[9px] text-text-muted block">FEED STATUS</span>
-              <span className="font-semibold text-text-primary text-[10.5px]">OPTICAL CARRIER DARK</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-1 border border-border-subtle font-mono text-left">
-            <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <div>
-              <span className="text-[9px] text-text-muted block">SYSTEM RECOVERY</span>
-              <span className="font-semibold text-emerald-400 text-[10.5px]">READY FOR REDIRECT</span>
-            </div>
-          </div>
-        </div>
-
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <Link
-            href="/studios"
+            href="/"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-[0_0_24px_rgba(224,79,38,0.35)] hover:opacity-90 transition-opacity cursor-pointer"
           >
-            <span>Return to Floor Catalog</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <Compass className="w-4 h-4" />
+            <span>Return to Home</span>
           </Link>
 
           <Link
-            href="/"
+            href="/studios"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border-subtle font-mono text-xs font-semibold text-text-primary transition-all cursor-pointer"
           >
-            <Compass className="w-3.5 h-3.5 text-brand-amber" />
-            <span>Explore Available Stages</span>
+            <span>Explore Studios</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </main>
