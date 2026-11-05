@@ -23,14 +23,23 @@ export async function generateMetadata({ params }: PageProps) {
 
 async function StudioContent({ params }: PageProps) {
   const { id } = await params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch {
+    session = null;
+  }
 
   let userWishlist: any[] = [];
   if (session?.user?.email) {
-    const token = await getAuthTokenServer();
-    userWishlist = await getMyWishlist(session.user.email, token);
+    try {
+      const token = await getAuthTokenServer();
+      userWishlist = await getMyWishlist(session.user.email, token);
+    } catch {
+      userWishlist = [];
+    }
   }
 
   const studio = await getSingleStudio(id);

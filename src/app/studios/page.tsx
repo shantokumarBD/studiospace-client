@@ -12,25 +12,44 @@ export const metadata = {
 };
 
 async function StudiosData() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  try {
+    let session = null;
+    try {
+      session = await auth.api.getSession({
+        headers: await headers(),
+      });
+    } catch {
+      session = null;
+    }
 
-  const studios = await getAllStudios();
-  let wishlist: any[] = [];
-  if (session?.user?.email) {
-    const token = await getAuthTokenServer();
-    wishlist = await getMyWishlist(session.user.email, token);
+    const studios = await getAllStudios();
+    let wishlist: any[] = [];
+    if (session?.user?.email) {
+      try {
+        const token = await getAuthTokenServer();
+        wishlist = await getMyWishlist(session.user.email, token);
+      } catch {
+        wishlist = [];
+      }
+    }
+
+    const initialWishlistIds = (wishlist || []).map((item) => item.studioId);
+
+    return (
+      <StudiosExplorer
+        initialStudios={studios || []}
+        initialWishlistIds={initialWishlistIds}
+      />
+    );
+  } catch (err) {
+    console.error("Failed to load studios data:", err);
+    return (
+      <StudiosExplorer
+        initialStudios={[]}
+        initialWishlistIds={[]}
+      />
+    );
   }
-
-  const initialWishlistIds = wishlist.map((item) => item.studioId);
-
-  return (
-    <StudiosExplorer
-      initialStudios={studios}
-      initialWishlistIds={initialWishlistIds}
-    />
-  );
 }
 
 export default function StudiosPage() {
