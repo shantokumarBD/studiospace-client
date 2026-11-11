@@ -14,15 +14,22 @@ import {
   Sparkles,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { getMyStudios, getMyBookings, getMyWishlist, getHostBookings } from "@/lib/api";
+import {
+  getMyStudios,
+  getMyBookings,
+  getMyWishlist,
+  getHostBookings,
+} from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import ModernLoader from "@/components/Shared/ModernLoader";
 import HostRequestsManager from "@/components/Dashboard/HostRequestsManager";
 import { Badge } from "@/components/ui/badge";
+import { Studio, Booking, WishlistItem } from "@/Types";
 
 export const metadata = {
   title: "Creator Dashboard | StudioSpace",
-  description: "Overview of your studio listings, bookings, and saved workspaces.",
+  description:
+    "Overview of your studio listings, bookings, and saved workspaces.",
 };
 
 async function DashboardContent() {
@@ -47,10 +54,10 @@ async function DashboardContent() {
   }
   const email = session.user.email || "";
 
-  let studios: any[] = [];
-  let bookings: any[] = [];
-  let wishlist: any[] = [];
-  let hostRequests: any[] = [];
+  let studios: Studio[] = [];
+  let bookings: Booking[] = [];
+  let wishlist: WishlistItem[] = [];
+  let hostRequests: Booking[] = [];
 
   try {
     const results = await Promise.allSettled([
@@ -72,7 +79,7 @@ async function DashboardContent() {
   }
 
   const pendingHostRequests = (hostRequests || []).filter((b) =>
-    (b.status || "").toLowerCase().includes("pending")
+    (b.status || "").toLowerCase().includes("pending"),
   ).length;
 
   return (
@@ -87,7 +94,8 @@ async function DashboardContent() {
             Welcome back, {session.user.name?.split(" ")[0] || "Creator"}
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
-            Manage your listed stages, review incoming creator reservations, and track scheduled productions.
+            Manage your listed stages, review incoming creator reservations, and
+            track scheduled productions.
           </p>
         </div>
 
@@ -212,10 +220,7 @@ async function DashboardContent() {
       </div>
 
       <div id="incoming-requests" className="my-10 scroll-mt-6">
-        <HostRequestsManager
-          initialRequests={hostRequests}
-          hostEmail={email}
-        />
+        <HostRequestsManager initialRequests={hostRequests} hostEmail={email} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
@@ -224,7 +229,9 @@ async function DashboardContent() {
             <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
               <div className="flex items-center gap-2">
                 <FolderKanban className="w-4 h-4 text-brand-orange" />
-                <h3 className="font-bold text-base text-text-primary">My Studio Stages</h3>
+                <h3 className="font-bold text-base text-text-primary">
+                  My Studio Stages
+                </h3>
               </div>
               <Link
                 href="/my-listings"
@@ -237,7 +244,8 @@ async function DashboardContent() {
             {studios.length === 0 ? (
               <div className="py-8 text-center flex flex-col items-center justify-center">
                 <p className="text-xs text-text-secondary max-w-xs mb-4">
-                  You haven&apos;t listed any studios yet. Monetize your creative space by listing it today.
+                  You haven&apos;t listed any studios yet. Monetize your
+                  creative space by listing it today.
                 </p>
                 <Link
                   href="/add-studio"
@@ -292,7 +300,9 @@ async function DashboardContent() {
             <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
               <div className="flex items-center gap-2">
                 <CalendarCheck2 className="w-4 h-4 text-brand-orange" />
-                <h3 className="font-bold text-base text-text-primary">Recent Reservations (Renter)</h3>
+                <h3 className="font-bold text-base text-text-primary">
+                  Recent Reservations (Renter)
+                </h3>
               </div>
               <Link
                 href="/my-bookings"
@@ -305,7 +315,8 @@ async function DashboardContent() {
             {bookings.length === 0 ? (
               <div className="py-8 text-center flex flex-col items-center justify-center">
                 <p className="text-xs text-text-secondary max-w-xs mb-4">
-                  No stage reservations scheduled yet. Browse available studios for your next shoot.
+                  No stage reservations scheduled yet. Browse available studios
+                  for your next shoot.
                 </p>
                 <Link
                   href="/studios"
@@ -331,9 +342,11 @@ async function DashboardContent() {
                           className={`text-[9px] font-mono uppercase font-bold py-0 px-1.5 h-auto ${
                             (bk.status || "").toLowerCase().includes("confirm")
                               ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
-                              : (bk.status || "").toLowerCase().includes("cancel")
-                              ? "text-rose-400 bg-rose-500/10 border-rose-500/20"
-                              : "text-amber-400 bg-amber-500/10 border-amber-500/20"
+                              : (bk.status || "")
+                                    .toLowerCase()
+                                    .includes("cancel")
+                                ? "text-rose-400 bg-rose-500/10 border-rose-500/20"
+                                : "text-amber-400 bg-amber-500/10 border-amber-500/20"
                           }`}
                         >
                           {bk.status || "Pending"}
@@ -342,9 +355,13 @@ async function DashboardContent() {
                       <div className="flex items-center gap-2 text-[11px] font-mono text-text-muted mt-1">
                         <span>{bk.date}</span>
                         <span>•</span>
-                        <span>{bk.callTime} – {bk.wrapTime}</span>
+                        <span>
+                          {bk.callTime} – {bk.wrapTime}
+                        </span>
                         <span>•</span>
-                        <span className="text-emerald-400 font-bold">${bk.totalAmount}</span>
+                        <span className="text-emerald-400 font-bold">
+                          ${bk.totalAmount}
+                        </span>
                       </div>
                     </div>
                     <Link

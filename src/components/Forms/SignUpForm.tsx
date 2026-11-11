@@ -53,9 +53,11 @@ export function SignUpForm({
     }
     setIsUploadingImage(true);
     try {
-      const apiKey =
-        process.env.NEXT_PUBLIC_IMGBB_API_KEY ||
-        "f678e604d546047549ca4cc2f2a651b0";
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!apiKey) {
+        toast.error("ImgBB API key is not configured.");
+        return;
+      }
       const formData = new FormData();
       formData.append("image", file);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
@@ -99,7 +101,10 @@ export function SignUpForm({
     });
 
     if (!validation.success) {
-      toast.error(validation.error.issues[0]?.message || "Please fix the validation errors");
+      toast.error(
+        validation.error.issues[0]?.message ||
+          "Please fix the validation errors",
+      );
       return;
     }
 
@@ -110,7 +115,10 @@ export function SignUpForm({
         name: validation.data.fullName,
         email: validation.data.email,
         password: validation.data.password,
-        image: validation.data.image && validation.data.image.trim() !== "" ? validation.data.image.trim() : undefined,
+        image:
+          validation.data.image && validation.data.image.trim() !== ""
+            ? validation.data.image.trim()
+            : undefined,
       });
 
       if (error) {
@@ -130,18 +138,15 @@ export function SignUpForm({
 
   const handleGoogleSignUp = async () => {
     const data = await signIn.social({
-      provider: "google"
-    })
+      provider: "google",
+    });
   };
-
-
-
 
   return (
     <div
       className={cn(
         "w-full max-w-6xl mx-auto flex items-center justify-center",
-        className
+        className,
       )}
       {...props}
     >
@@ -191,7 +196,8 @@ export function SignUpForm({
                 <span className="text-brand-orange">creative space</span> today.
               </h2>
               <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mt-2">
-                Join thousands of creators, cinematographers, and stage managers on the most trusted studio network.
+                Join thousands of creators, cinematographers, and stage managers
+                on the most trusted studio network.
               </p>
             </div>
 
@@ -339,7 +345,9 @@ export function SignUpForm({
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-1 hover:bg-surface-3 border border-border-subtle text-xs font-mono font-semibold text-text-primary hover:text-brand-orange transition-colors cursor-pointer shadow-xs shrink-0"
                         >
                           <UploadCloud className="w-3.5 h-3.5 text-brand-orange" />
-                          <span>{avatarUrl ? "Change Photo" : "Choose File"}</span>
+                          <span>
+                            {avatarUrl ? "Change Photo" : "Choose File"}
+                          </span>
                         </label>
                         <input
                           id="avatar-file-input"
@@ -365,7 +373,9 @@ export function SignUpForm({
                           </button>
                         ) : (
                           <span className="text-[10px] font-mono text-text-muted truncate">
-                            {isUploadingImage ? "Uploading to ImgBB..." : "PNG, JPG up to 10MB"}
+                            {isUploadingImage
+                              ? "Uploading to ImgBB..."
+                              : "PNG, JPG up to 10MB"}
                           </span>
                         )}
                       </div>
@@ -394,7 +404,9 @@ export function SignUpForm({
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="text-text-muted hover:text-text-primary transition-colors ml-2 focus:outline-none cursor-pointer"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
                         {showPassword ? (
                           <EyeOff className="w-3.5 h-3.5" />
@@ -407,36 +419,48 @@ export function SignUpForm({
                     <div className="grid grid-cols-3 gap-1.5 pt-1.5 font-mono text-[10px]">
                       <div
                         className={`flex items-center gap-1 transition-colors ${
-                          hasMinLength ? "text-emerald-400 font-bold" : "text-text-muted"
+                          hasMinLength
+                            ? "text-emerald-400 font-bold"
+                            : "text-text-muted"
                         }`}
                       >
                         <CheckCircle2
                           className={`w-3 h-3 ${
-                            hasMinLength ? "text-emerald-400" : "text-text-muted/40"
+                            hasMinLength
+                              ? "text-emerald-400"
+                              : "text-text-muted/40"
                           }`}
                         />
                         <span>Min 6 chars</span>
                       </div>
                       <div
                         className={`flex items-center gap-1 transition-colors ${
-                          hasUppercase ? "text-emerald-400 font-bold" : "text-text-muted"
+                          hasUppercase
+                            ? "text-emerald-400 font-bold"
+                            : "text-text-muted"
                         }`}
                       >
                         <CheckCircle2
                           className={`w-3 h-3 ${
-                            hasUppercase ? "text-emerald-400" : "text-text-muted/40"
+                            hasUppercase
+                              ? "text-emerald-400"
+                              : "text-text-muted/40"
                           }`}
                         />
                         <span>1 Uppercase</span>
                       </div>
                       <div
                         className={`flex items-center gap-1 transition-colors ${
-                          hasLowercase ? "text-emerald-400 font-bold" : "text-text-muted"
+                          hasLowercase
+                            ? "text-emerald-400 font-bold"
+                            : "text-text-muted"
                         }`}
                       >
                         <CheckCircle2
                           className={`w-3 h-3 ${
-                            hasLowercase ? "text-emerald-400" : "text-text-muted/40"
+                            hasLowercase
+                              ? "text-emerald-400"
+                              : "text-text-muted/40"
                           }`}
                         />
                         <span>1 Lowercase</span>

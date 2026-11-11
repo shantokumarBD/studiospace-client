@@ -17,29 +17,27 @@ export default function NavLinks() {
   const [activeHash, setActiveHash] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash;
-      setActiveHash(hash);
-      if (hash === "#how-it-works") {
-        setTimeout(() => {
-          const el = document.getElementById("how-it-works");
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 150);
-      }
+    if (typeof document === "undefined") return;
 
-      const handleHashChange = () => {
-        setActiveHash(window.location.hash);
-      };
-
-      window.addEventListener("hashchange", handleHashChange);
-      return () => window.removeEventListener("hashchange", handleHashChange);
+    if (document.location.hash === "#how-it-works") {
+      setTimeout(() => {
+        const el = document.getElementById("how-it-works");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
     }
+
+    const handleHashChange = () => {
+      setActiveHash(document.location.hash);
+    };
+
+    document.defaultView?.addEventListener("hashchange", handleHashChange);
+    return () => document.defaultView?.removeEventListener("hashchange", handleHashChange);
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && pathname === "/") {
+    if (typeof document !== "undefined" && pathname === "/") {
       const el = document.getElementById("how-it-works");
       if (!el) return;
 
@@ -48,7 +46,7 @@ export default function NavLinks() {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               setActiveHash("#how-it-works");
-            } else if (window.scrollY < 300) {
+            } else if ((document.documentElement.scrollTop || document.body.scrollTop || 0) < 300) {
               setActiveHash("");
             }
           });
@@ -69,7 +67,7 @@ export default function NavLinks() {
         const el = document.getElementById("how-it-works");
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
-          window.history.pushState(null, "", "/#how-it-works");
+          router.replace("/#how-it-works", { scroll: false });
         }
       } else {
         router.push("/#how-it-works");
@@ -77,8 +75,8 @@ export default function NavLinks() {
     } else if (href === "/") {
       setActiveHash("");
       if (pathname === "/") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        window.history.pushState(null, "", "/");
+        document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+        router.replace("/", { scroll: false });
       }
     } else {
       setActiveHash("");

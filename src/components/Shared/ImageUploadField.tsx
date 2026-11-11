@@ -64,9 +64,12 @@ export default function ImageUploadField({
     setIsUploading(true);
 
     try {
-      const apiKey =
-        process.env.NEXT_PUBLIC_IMGBB_API_KEY ||
-        "f678e604d546047549ca4cc2f2a651b0";
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!apiKey) {
+        toast.error("ImgBB API key is missing. Please configure .env file.");
+        setIsUploading(false);
+        return;
+      }
 
       const formData = new FormData();
       formData.append("image", file);
@@ -76,7 +79,7 @@ export default function ImageUploadField({
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       const resData = await response.json();
@@ -92,7 +95,7 @@ export default function ImageUploadField({
       }
     } catch {
       toast.error(
-        "Upload failed. Check your internet connection or paste an image URL directly."
+        "Upload failed. Check your internet connection or paste an image URL directly.",
       );
       if (!imageUrl) setPreview("");
     } finally {
@@ -178,8 +181,8 @@ export default function ImageUploadField({
             isDragOver
               ? "border-brand-orange bg-brand-orange/10 scale-[0.99]"
               : preview
-              ? "border-border-subtle bg-surface-1 hover:border-brand-orange/40"
-              : "border-border-subtle/80 bg-film-black hover:border-brand-orange/50 hover:bg-surface-1/50"
+                ? "border-border-subtle bg-surface-1 hover:border-brand-orange/40"
+                : "border-border-subtle/80 bg-film-black hover:border-brand-orange/50 hover:bg-surface-1/50"
           }`}
         >
           <input

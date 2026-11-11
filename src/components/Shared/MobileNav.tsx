@@ -29,15 +29,15 @@ export default function MobileNav() {
         const el = document.getElementById("how-it-works");
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
-          window.history.pushState(null, "", "/#how-it-works");
+          router.replace("/#how-it-works");
         }
       } else {
         router.push("/#how-it-works");
       }
     } else if (href === "/") {
       if (pathname === "/") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        window.history.pushState(null, "", "/");
+        document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+        router.replace("/");
       }
     }
   };

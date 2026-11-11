@@ -49,7 +49,7 @@ StudioSpace serves two primary stakeholder groups in the modern creative economy
 
 5. **Disorganized Invoicing & Tax Ledger Friction**:
    - *Problem*: Freelancers struggle to collect clean, compliant invoices for production tax deductions.
-   - *Solution*: Built-in digital receipt generator with printable ledgers (`window.print()`) formatted for commercial accounting.
+   - *Solution*: Built-in standalone branded invoice generator (`invoice.ts`) formatted for commercial accounting ledgers, with zero browser freeze.
 
 ---
 
@@ -67,20 +67,27 @@ StudioSpace serves two primary stakeholder groups in the modern creative economy
 3. **Direct ImgBB Cloud CDN Upload Integration (Core Rubric Requirement)**:
    - Built-in drag-and-drop file upload calling the ImgBB REST API (`/1/upload`) directly from the browser, with local image preview and fallback URL toggle.
 
-4. **Hourly Shoot Scheduler & Collision Prevention (Challenge Requirement)**:
+4. **Hourly Shoot Scheduler & Double-Booking Collision Blocker (Challenge Requirement)**:
    - Precision call-time and wrap-time duration calculator on `/studios/[id]` with real-time deposit math.
-   - Server-side collision detection to prevent double-booking conflicts on identical dates and overlapping shoot hours.
+   - Client and server-side collision detection to prevent double-booking conflicts on identical dates and overlapping shoot hours, with dynamic button locking.
 
-5. **Digital Receipt Generation & Printable Accounting Ledgers (Optional Requirement)**:
+5. **Digital Receipt Generation & Standalone Accounting Invoices**:
    - Comprehensive reservation tracker (`/my-bookings`) displaying pending, confirmed, and cancelled booking status badges.
-   - Built-in printable invoice/receipt viewer (`window.print()`) formatted for commercial accounting ledgers.
+   - Built-in official invoice generator downloading print-ready accounting ledgers without UI blocking or `window.print()` freezing.
+   - Integrated "Add to Calendar" (.ics) export for Google Calendar, Apple Calendar, and Outlook.
 
-6. **Universal Light & Dark Mode System with Zero-FOUC (Challenge Requirement)**:
+6. **Interactive 4-Angle Studio Gallery Carousel**:
+   - High-resolution studio preview with 4-angle carousel navigation (Main Bay, Lighting Grid, Infinity Cyc, Control Suite), keyboard & click controls, and thumbnail selectors.
+
+7. **Verified Creator Reviews & Rating Engine**:
+   - Interactive 5-star rating submission modal on studio details with live comment posting and automatic server recalculation of average star rating.
+
+8. **Universal Light & Dark Mode System with Zero-FOUC (Challenge Requirement)**:
    - System-synchronized and user-toggled theme preference with immediate inline script execution to eliminate Flash of Unstyled Content.
    - Rebranded styling featuring film aperture logo and the new official X platform logo.
 
-7. **Cryptographic JWT Security with HTTPOnly Cookies & JWKS (Challenge Requirement)**:
-   - Strict `verifyToken` middleware securing all mutations (`POST`, `PUT`, `PATCH`, `DELETE`) with remote JWKS cryptographic key rotation.
+9. **Cryptographic JWT Security with HTTPOnly Cookies & JWKS (Challenge Requirement)**:
+   - Strict `verifyToken` middleware securing all mutations (`POST`, `PUT`, `PATCH`, `DELETE`) with remote JWKS cryptographic key rotation and strict IDOR/BOLA ownership verification.
 
 ---
 
@@ -203,4 +210,4 @@ cp .env.example .env
 # Run Express server
 npm run dev # or node index.js
 ```
-Server runs at: `http://localhost:8000`
+Server runs at: `http://localhost:5000`
