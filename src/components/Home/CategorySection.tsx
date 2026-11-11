@@ -114,7 +114,7 @@ export default function CategorySection() {
 
                   <div className="mt-5">
                     <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">
-                      {cat.id} // TYPE
+                      {cat.id} 
                     </span>
                     <h3 className="font-bold text-lg text-text-primary mt-1 group-hover:text-brand-orange transition-colors">
                       {cat.title}

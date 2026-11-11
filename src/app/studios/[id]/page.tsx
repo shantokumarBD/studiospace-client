@@ -7,6 +7,8 @@ import { getSingleStudio, getMyWishlist } from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import StudioDetailsView from "@/components/Studios/StudioDetailsView";
 import ModernLoader from "@/components/Shared/ModernLoader";
+import { WishlistItem } from "@/Types";
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -27,7 +29,7 @@ async function StudioContent({ params }: PageProps) {
     headers: await headers(),
   });
 
-  let userWishlist: any[] = [];
+  let userWishlist: WishlistItem[] = [];
   if (session?.user?.email) {
     try {
       const token = await getAuthTokenServer();

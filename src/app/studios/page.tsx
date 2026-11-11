@@ -5,6 +5,8 @@ import { getAllStudios, getMyWishlist } from "@/lib/api";
 import { getAuthTokenServer } from "@/lib/gettokenformServer";
 import StudiosExplorer from "@/components/Studios/StudiosExplorer";
 import ModernLoader from "@/components/Shared/ModernLoader";
+import { WishlistItem } from "@/Types";
+
 
 export const metadata = {
   title: "Explore Studios | StudioSpace",
@@ -17,7 +19,7 @@ async function StudiosData() {
   });
 
   const studios = await getAllStudios();
-  let wishlist: any[] = [];
+  let wishlist: WishlistItem[] = [];
   if (session?.user?.email) {
     try {
       const token = await getAuthTokenServer();

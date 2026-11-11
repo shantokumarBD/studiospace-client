@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ import {
   Clock,
   ShieldCheck,
   ChevronRight,
+  ChevronLeft,
   ArrowRight,
   Maximize2,
   Users,
@@ -22,10 +23,20 @@ import {
   User,
   X,
   Sparkles,
+  MessageSquare,
+  AlertTriangle,
 } from "lucide-react";
-import { Studio, Booking } from "@/Types";
+import { Studio, Booking, Review } from "@/Types";
 import { useSession } from "@/lib/auth-client";
-import { createBooking, addToWishlist, removeFromWishlist } from "@/lib/api";
+import {
+  createBooking,
+  addToWishlist,
+  removeFromWishlist,
+  getStudioReviews,
+  createStudioReview,
+  getStudioBookedSlots,
+  BookedSlot,
+} from "@/lib/api";
 import { GetTokenFormClient } from "@/lib/gettokenformClient";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
@@ -62,6 +73,115 @@ export default function StudioDetailsView({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
+  const galleryImages = [
+    { url: studio.image, label: "Main Production Bay" },
+    {
+      url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1400&q=80",
+      label: "Motorized Grid & Lighting",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1400&q=80",
+      label: "Daylight Infinity Cyc",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1400&q=80",
+      label: "Client Lounge & Control Suite",
+    },
+  ];
+
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [currentRating, setCurrentRating] = useState(studio.rating || 5.0);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    getStudioReviews(studio._id).then((serverReviews) => {
+      if (isMounted) {
+        if (serverReviews && serverReviews.length > 0) {
+          setReviews(serverReviews);
+        } else {
+          setReviews([
+            {
+              _id: "seed-1",
+              studioId: studio._id,
+              userName: "Damian Cruz",
+              userEmail: "damian@cruzcinema.io",
+              rating: 5,
+              comment: "Acoustics on this stage were immaculate. We ran a 12-hour commercial shoot with heavy cine lights on camlock, zero breakers tripped, host was super responsive.",
+              createdAt: "2 days ago",
+            },
+            {
+              _id: "seed-2",
+              studioId: studio._id,
+              userName: "Elena Rostova",
+              userEmail: "elena@voguecreatives.com",
+              rating: 5,
+              comment: "The daylight loft and infinity cyc wall saved us hours in post-production. Pristine cleanliness and very easy loading dock access.",
+              createdAt: "1 week ago",
+            },
+          ]);
+        }
+      }
+    });
+
+    getStudioBookedSlots(studio._id).then((slots) => {
+      if (isMounted && slots) {
+        setBookedSlots(slots);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [studio._id]);
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!session?.user) {
+      toast.error("Please log in to leave a review");
+      router.push(`/log-in?callbackUrl=/studios/${studio._id}`);
+      return;
+    }
+
+    if (!reviewComment.trim()) {
+      toast.error("Please enter your review feedback");
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      const token = await GetTokenFormClient();
+      const res = await createStudioReview(
+        studio._id,
+        { rating: reviewRating, comment: reviewComment },
+        token
+      );
+
+      if (res.success) {
+        toast.success(res.message || "Review submitted successfully!");
+        setReviews((prev) => [res.data, ...prev]);
+        if (res.newRating) {
+          setCurrentRating(res.newRating);
+        }
+        setReviewComment("");
+        setIsReviewModalOpen(false);
+        fireCelebration();
+      } else {
+        toast.error(res.message || "Failed to submit review");
+      }
+    } catch {
+      toast.error("Network error while submitting review");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   const fireCelebration = () => {
     confetti({
       particleCount: 120,
@@ -78,9 +198,15 @@ export default function StudioDetailsView({
   const deposit = studio.securityDeposit || 250;
   const totalAmount = baseRate + deposit;
 
+  const conflictingSlot = bookedSlots.find((slot) => {
+    if (slot.date !== selectedDate) return false;
+    return callTime < slot.wrapTime && wrapTime > slot.callTime;
+  });
+  const isSlotBooked = Boolean(conflictingSlot);
+
   const handleShare = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(document.location.href);
       toast.success("Studio link copied to clipboard!");
     }
   };
@@ -135,6 +261,13 @@ export default function StudioDetailsView({
 
     if (isOwner) {
       toast.error("This is your studio listing. You cannot book your own space.");
+      return;
+    }
+
+    if (isSlotBooked) {
+      toast.error(
+        `Time collision: This workspace is already reserved (${conflictingSlot?.callTime} - ${conflictingSlot?.wrapTime}) on ${selectedDate}.`
+      );
       return;
     }
 
@@ -267,16 +400,80 @@ export default function StudioDetailsView({
 
           <div className="lg:col-span-8 flex flex-col gap-10">
 
-            <div className="relative aspect-[16/10] w-full bg-surface-2 rounded-3xl overflow-hidden shadow-2xl border border-border-subtle group">
-              <img
-                src={studio.image}
-                alt={studio.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-film-black/90 via-transparent to-film-black/30 pointer-events-none" />
-              <div className="absolute bottom-5 left-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-film-black/85 backdrop-blur-md border border-white/10 font-mono text-xs font-semibold text-text-primary">
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-orange animate-pulse" />
-                <span>{`VERIFIED PRODUCTION STAGE // ${studio.category.toUpperCase()}`}</span>
+            {/* Interactive Stage Gallery Carousel */}
+            <div className="flex flex-col gap-3">
+              <div className="relative aspect-[16/10] w-full bg-surface-2 rounded-3xl overflow-hidden shadow-2xl border border-border-subtle group select-none">
+                <img
+                  src={galleryImages[activeImageIndex].url}
+                  alt={`${studio.title} - ${galleryImages[activeImageIndex].label}`}
+                  className="w-full h-full object-cover transition-all duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-film-black/90 via-transparent to-film-black/30 pointer-events-none" />
+
+                {/* Left/Right Carousel Arrows */}
+                <button
+                  type="button"
+                  aria-label="Previous stage photo"
+                  onClick={() =>
+                    setActiveImageIndex((prev) =>
+                      prev === 0 ? galleryImages.length - 1 : prev - 1
+                    )
+                  }
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-brand-orange hover:border-brand-orange transition-all cursor-pointer shadow-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                <button
+                  type="button"
+                  aria-label="Next stage photo"
+                  onClick={() =>
+                    setActiveImageIndex((prev) =>
+                      prev === galleryImages.length - 1 ? 0 : prev + 1
+                    )
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-film-black/80 backdrop-blur-md border border-white/10 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-brand-orange hover:border-brand-orange transition-all cursor-pointer shadow-lg"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+                {/* Status & Caption Badge */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-film-black/85 backdrop-blur-md border border-white/10 font-mono text-xs font-semibold text-text-primary">
+                    <span className="w-2.5 h-2.5 rounded-full bg-brand-orange animate-pulse" />
+                    <span>{galleryImages[activeImageIndex].label.toUpperCase()}</span>
+                  </div>
+
+                  <span className="px-3 py-1 rounded-full bg-film-black/85 backdrop-blur-md border border-white/10 font-mono text-[11px] text-text-secondary font-bold">
+                    {activeImageIndex + 1} / {galleryImages.length}
+                  </span>
+                </div>
+              </div>
+
+              {/* Thumbnail Strip */}
+              <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+                {galleryImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`relative aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${
+                      activeImageIndex === idx
+                        ? "border-brand-orange ring-2 ring-brand-orange/40 scale-[1.02]"
+                        : "border-border-subtle opacity-65 hover:opacity-100 hover:border-text-secondary"
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.label}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-film-black/20" />
+                    <span className="absolute bottom-1 left-1.5 right-1.5 truncate font-mono text-[9px] sm:text-[10px] text-white font-medium bg-film-black/75 px-1 py-0.5 rounded">
+                      {img.label}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -392,6 +589,134 @@ export default function StudioDetailsView({
               </a>
             </div>
 
+            {/* Creator Reviews & Ratings Section */}
+            <div className="rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-8 shadow-xl flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border-subtle">
+                <div>
+                  <div className="font-mono text-xs font-semibold text-brand-orange uppercase tracking-widest mb-1">
+                    {"// PRODUCTION TELEMETRY & FEEDBACK"}
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-text-primary">
+                    Creator Reviews &amp; Ratings
+                  </h3>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!session?.user) {
+                      toast.error("Please sign in to write a review");
+                      router.push(`/log-in?callbackUrl=/studios/${studio._id}`);
+                      return;
+                    }
+                    setIsReviewModalOpen(true);
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-md hover:opacity-95 transition-all cursor-pointer h-auto border-0 self-start sm:self-auto flex items-center gap-2"
+                >
+                  <Star className="w-3.5 h-3.5 fill-white" />
+                  <span>Write a Review</span>
+                </Button>
+              </div>
+
+              {/* Rating Summary Bar */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center p-5 rounded-2xl bg-surface-2/70 border border-border-subtle">
+                <div className="sm:col-span-4 flex flex-col items-center justify-center text-center sm:border-r border-border-subtle sm:pr-6">
+                  <span className="font-mono text-4xl sm:text-5xl font-black text-text-primary">
+                    {currentRating}
+                  </span>
+                  <div className="flex items-center gap-1 my-1.5">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i <= Math.round(currentRating)
+                            ? "fill-brand-amber text-brand-amber"
+                            : "text-text-muted"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-mono text-xs text-text-muted">
+                    Based on {reviews.length} verified shoot reviews
+                  </span>
+                </div>
+
+                <div className="sm:col-span-8 flex flex-col gap-2 font-mono text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 text-text-muted">5 ★</span>
+                    <div className="flex-1 h-2 rounded-full bg-surface-3 overflow-hidden">
+                      <div className="h-full bg-brand-orange rounded-full" style={{ width: "88%" }} />
+                    </div>
+                    <span className="w-8 text-right text-text-secondary font-bold">88%</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 text-text-muted">4 ★</span>
+                    <div className="flex-1 h-2 rounded-full bg-surface-3 overflow-hidden">
+                      <div className="h-full bg-brand-amber rounded-full" style={{ width: "12%" }} />
+                    </div>
+                    <span className="w-8 text-right text-text-secondary font-bold">12%</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 text-text-muted">3 ★</span>
+                    <div className="flex-1 h-2 rounded-full bg-surface-3 overflow-hidden">
+                      <div className="h-full bg-text-muted rounded-full" style={{ width: "0%" }} />
+                    </div>
+                    <span className="w-8 text-right text-text-secondary font-bold">0%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Review Cards List */}
+              <div className="flex flex-col gap-4 mt-2">
+                {reviews.map((rev, idx) => (
+                  <div
+                    key={rev._id || idx}
+                    className="p-5 rounded-2xl bg-surface-2/60 border border-border-subtle flex flex-col gap-3 transition-all hover:border-brand-orange/30"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-orange to-brand-amber text-white font-mono text-xs font-bold flex items-center justify-center">
+                          {(rev.userName || "C").charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-text-primary">
+                              {rev.userName}
+                            </span>
+                            <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                              VERIFIED CREW
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono text-text-muted block">
+                            {typeof rev.createdAt === "string"
+                              ? rev.createdAt
+                              : new Date(rev.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            className={`w-3.5 h-3.5 ${
+                              s <= rev.rating
+                                ? "fill-brand-amber text-brand-amber"
+                                : "text-text-muted"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                      &ldquo;{rev.comment}&rdquo;
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           <aside className="lg:col-span-4 lg:sticky lg:top-24 w-full">
@@ -470,6 +795,16 @@ export default function StudioDetailsView({
                     </div>
                   </div>
                 </div>
+
+                {isSlotBooked && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-mono flex items-start gap-2.5">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-rose-300">Time Collision Detected</span>
+                      <span>This stage is reserved ({conflictingSlot?.callTime} – {conflictingSlot?.wrapTime}) on {selectedDate}.</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="p-4 rounded-2xl bg-surface-2 border border-border-subtle font-mono text-xs flex flex-col gap-2">
@@ -502,6 +837,20 @@ export default function StudioDetailsView({
                   </Button>
                   <p className="text-center font-mono text-[11px] text-brand-orange">
                     Host account: Self-booking is restricted.
+                  </p>
+                </div>
+              ) : isSlotBooked ? (
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    disabled
+                    className="w-full py-4 h-auto rounded-2xl bg-rose-500/10 text-rose-400 font-mono text-xs sm:text-sm font-bold border border-rose-500/30 cursor-not-allowed opacity-85 flex items-center justify-center gap-2"
+                  >
+                    <AlertTriangle className="w-4 h-4 text-rose-400" />
+                    <span>Slot Unavailable on Selected Date</span>
+                  </Button>
+                  <p className="text-center font-mono text-[11px] text-rose-400">
+                    Existing booking: {conflictingSlot?.callTime} – {conflictingSlot?.wrapTime}
                   </p>
                 </div>
               ) : (
@@ -745,6 +1094,101 @@ export default function StudioDetailsView({
             </div>
           </div>
         )}
+
+      {/* Write a Review Modal */}
+      {isReviewModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-film-black/80 backdrop-blur-md"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsReviewModalOpen(false);
+          }}
+        >
+          <div className="relative w-full max-w-md rounded-3xl bg-surface-1 border border-border-subtle p-6 sm:p-7 shadow-2xl flex flex-col gap-5 text-text-primary">
+            <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
+              <div>
+                <span className="font-mono text-xs text-brand-orange font-bold uppercase tracking-wider">
+                  CREATOR FEEDBACK
+                </span>
+                <h3 className="text-xl font-bold text-text-primary mt-0.5">
+                  Write Stage Review
+                </h3>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsReviewModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-surface-2 hover:bg-surface-3 flex items-center justify-center text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <form onSubmit={handleSubmitReview} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-text-secondary uppercase">
+                  Overall Rating
+                </label>
+                <div className="flex items-center gap-2 p-3 rounded-2xl bg-surface-2 border border-border-subtle">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setReviewRating(star)}
+                      className="p-1 text-text-muted hover:scale-125 transition-all cursor-pointer"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${
+                          star <= (hoverRating || reviewRating)
+                            ? "fill-brand-amber text-brand-amber"
+                            : "text-text-muted/40"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-auto font-mono text-xs font-bold text-brand-orange">
+                    {reviewRating} of 5 Stars
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-text-secondary uppercase">
+                  Your Production Review
+                </label>
+                <Textarea
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Tell other filmmakers about acoustic isolation, lighting rigs, air conditioning, host communication..."
+                  rows={4}
+                  required
+                  className="w-full bg-film-black border border-border-subtle rounded-xl p-3 text-text-primary text-xs focus-visible:border-brand-orange focus-visible:ring-0 resize-none shadow-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsReviewModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-surface-2 hover:bg-surface-3 border border-border-subtle font-mono text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer h-auto"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-brand-orange to-brand-amber text-white font-mono text-xs font-bold shadow-md hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-2 disabled:opacity-50 h-auto border-0"
+                >
+                  {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

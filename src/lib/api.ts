@@ -1,4 +1,4 @@
-import { Studio, Booking, WishlistItem } from "@/Types";
+import { Studio, Booking, WishlistItem, Review } from "@/Types";
 
 
 export const API_URL =
@@ -217,4 +217,52 @@ export async function removeFromWishlist(id: string, token?: string) {
     },
   });
   return res.json();
+}
+
+export async function getStudioReviews(studioId: string): Promise<Review[]> {
+  try {
+    const res = await fetch(`${API_URL}/studios/${studioId}/reviews`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return json?.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function createStudioReview(
+  studioId: string,
+  reviewData: { rating: number; comment: string },
+  token?: string
+) {
+  const res = await fetch(`${API_URL}/studios/${studioId}/reviews`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(reviewData),
+  });
+  return res.json();
+}
+
+export interface BookedSlot {
+  _id: string;
+  date: string;
+  callTime: string;
+  wrapTime: string;
+  status?: string;
+}
+
+export async function getStudioBookedSlots(studioId: string): Promise<BookedSlot[]> {
+  try {
+    const res = await fetch(`${API_URL}/studios/${studioId}/booked-slots`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return json?.data || [];
+  } catch {
+    return [];
+  }
 }
