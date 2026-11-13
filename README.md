@@ -7,7 +7,7 @@
 ## 🌐 Live Website & Repositories
 
 - **Live Client Web App**: [https://studiospace-client-bd.vercel.app](https://studiospace-client-bd.vercel.app)
-- **Live Server API**: [https://studiospace-server-sem6.onrender.com](https://studiospace-server-sem6.onrender.com)
+- **Live Server API**: [https://studiospace-server-one.vercel.app](https://studiospace-server-one.vercel.app)
 - **Client Repository**: [https://github.com/shantokumarBD/studiospace-client](https://github.com/shantokumarBD/studiospace-client)
 - **Server Repository**: [https://github.com/shantokumarBD/studiospace-server](https://github.com/shantokumarBD/studiospace-server)
 
